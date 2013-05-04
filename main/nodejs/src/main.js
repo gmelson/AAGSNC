@@ -82,6 +82,7 @@ function getallschedulesfromsites(res) {
   // put schedules in db
   Date track groups cost services notes registrationUri
   var schedule = {name: "", track: "", groups: "", cost:"", services:"", notes: ""};
+
 }
 
 
