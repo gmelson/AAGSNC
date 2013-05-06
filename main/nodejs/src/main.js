@@ -5,16 +5,16 @@ var url = require('url')
   , format = require('util').format;
 
 var mongourl = '127.0.0.1';
-var KEIGWINS_NDX = 0;
-var PTT_NDX = 1;
-var LETSRIDE_NDX = 2;
+var ZOOMZOOM_NDX = 0;
+var LETSRIDE_NDX = 1;
+var KEIGWINS_NDX = 2;
 var lastupdate;
 var checkdays = 1;
 
 var sites = {
-  urls:["http://z2trackdays.com","http://letsridetrackdays.com","http://keigwins.com"],
-  paths:["/ti/z2/content/calendar.html","/index.php?option=com_ayelshop&view=category&path=34&Itemid=41","/events_schedule.php"],
-  names:["Zoom Zoom","Let\'s Ride","Keigwins"]
+  url:["z2trackdays.com","letsridetrackdays.com","keigwins.com"],
+  path:["/ti/z2/content/calendar.html","/index.php?option=com_ayelshop&view=category&path=34&Itemid=41","/events_schedule.php"],
+  name:["Zoom Zoom","Let\'s Ride","Keigwins"]
 };
 
 function addscheduletodb(schedule) {
@@ -72,28 +72,34 @@ function needscheduleupdate(){
     // the rest of timeDiff is number of days
     days = timeDiff ;
   }
+  else {
+    days = 1;
+  }
 
   return (days >= checkdays) ? true : false;
 
 }
 
-function parsedomfor(sitendx, data) {
+function parsedomfor(data, sitendx) {
   switch(sitendx){
-
+    case ZOOMZOOM_NDX:
+    //html body center div#container div#main-body div#content-right div.t2013 div.t2013Header a div.t2013Name (text)
+    break;
   }
   //Keigwins
   //html->body->div#wrapper->div#contentContainer->div->div#contentBox->table.datatable->tbody->tr.datable->td->table->tbody->tr->td->a
 }
 
-function getschedulefromsite(backendhost, schedulepath){
+function getschedulefromsite(backendhost, schedulepath, sitendx){
 
 	http.get({ host: backendhost, path: schedulepath, }, function(res) {
-  		console.log("statusCode: ", res.statusCode);
-  		console.log("headers: ", res.headers);
+  		//console.log("statusCode: ", res.statusCode);
+  		//console.log("headers: ", res.headers);
 		
   		res.on('data', function(d) {
-    			process.stdout.write(d);
-          return d;
+        process.stdout.write(d);
+        parsedomfor(d, sitendx);
+        return d;
 		});
 
 	}).on('error', function(e) {
@@ -104,15 +110,16 @@ function getschedulefromsite(backendhost, schedulepath){
 
 function getallschedulesfromsites(res) {
 
-  var data;
   // Check last update time to determine if we need schedule refresh 
+  console.log("check for update");
   if (needscheduleupdate()){
+    console.log("do check for updates");
     for (var i = sites.url.length - 1; i >= 0; i--) {
-       data += getschedulefromsite(sites.url[i], sites.path[i]);
-       console.log("data from schedule " + data);
+       getschedulefromsite(sites.url[i], sites.path[i], i);
     };
   }
 
+  console.log("check done");
   // Should look up list of uri's from couch db
 
   // iterate over uri's and retrieve schedules
@@ -127,9 +134,11 @@ function getallschedulesfromsites(res) {
 
 http.createServer(function(req,res) {
   res.writeHead(200, {'Content-Type':'text/plain'});
+  //res.writeHead(200, {'Content-Type':'text/html'});
   var query = url.parse(req.url).query;
   console.log("hit");
   var data = getallschedulesfromsites(res);
+  console.log("all data returned =" + data);
   res.end(data);
   //res.end('hit','utf8');
 }).listen(8080)
