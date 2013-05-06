@@ -104,10 +104,12 @@ function getschedulefromsite(backendhost, schedulepath){
 
 function getallschedulesfromsites(res) {
 
+  var data;
   // Check last update time to determine if we need schedule refresh 
   if (needscheduleupdate()){
     for (var i = sites.url.length - 1; i >= 0; i--) {
-       getschedulefromsite(sites.url[i], sites.path[i]);
+       data += getschedulefromsite(sites.url[i], sites.path[i]);
+       console.log("data from schedule " + data);
     };
   }
 
@@ -117,16 +119,18 @@ function getallschedulesfromsites(res) {
   
 
   // put schedules in db
-  Date track groups cost services notes registrationUri
   var schedule = {name: "", track: "", groups: "", cost:"", services:"", notes: ""};
 
+  return data;
 }
 
 
 http.createServer(function(req,res) {
   res.writeHead(200, {'Content-Type':'text/plain'});
   var query = url.parse(req.url).query;
-  getallschedulesfromsites(res);
+  console.log("hit");
+  var data = getallschedulesfromsites(res);
+  res.end(data);
   //res.end('hit','utf8');
 }).listen(8080)
 console.log('Server running at 8080');
