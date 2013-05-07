@@ -2,9 +2,10 @@
 var url = require('url')
   , http = require('http')
   , MongoClient = require('mongodb').MongoClient
-  , format = require('util').format;
+  , format = require('util').format
+  , htmlparser = require('htmlparser2');
 
-var mongourl = '127.0.0.1';
+var mongourl = 'mongodb://track:trackdays@127.0.0.1:27017/schedule'
 var ZOOMZOOM_NDX = 0;
 var LETSRIDE_NDX = 1;
 var KEIGWINS_NDX = 2;
@@ -12,39 +13,79 @@ var lastupdate;
 var checkdays = 1;
 
 var sites = {
-  url:["z2trackdays.com","letsridetrackdays.com","keigwins.com"],
+  url:["z2trackdays.com"],//,"letsridetrackdays.com","keigwins.com"],
   path:["/ti/z2/content/calendar.html","/index.php?option=com_ayelshop&view=category&path=34&Itemid=41","/events_schedule.php"],
   name:["Zoom Zoom","Let\'s Ride","Keigwins"]
 };
 
-function addscheduletodb(schedule) {
+var nostate = 0;
+var startstate = 1;
+var titlestate = 2;
+var datestate = 3;
+
+
+var currState = "none";
+var trackname = "";
+var trackdate = "";
+
+var zoomparser = new htmlparser.Parser({
+
+  onopentag: function(name, attribs){
+      if (name=="a" && attribs.href.indexOf("category=") > 1)
+      {
+        currState = startstate;
+      }
+      else if(name == "h1" && currState == startstate){
+        currState = titlestate;
+      }
+  },
+  ontext: function(text){
+      if(currState == titlestate){
+        trackname = text;
+        currState = datestate;
+      }
+      else if (currState == datestate) 
+      {
+        trackdate = text;
+        currState = nostate; 
+
+        // put schedules in db
+        addscheduletodb("Zoom Zoom",trackname,trackdate);
+
+      }
+  },
+  onclosetag: function(tagname){
+  }
+});
+
+function addscheduletodb(club, trackname, trackdate) {
+
+  var schedule = {name: club, track: trackname, groups: "", cost:"", services:"", notes: "", date: trackdate};
+
   MongoClient.connect(mongourl, function(err, db){
     
     if(err) throw err;
-    console.log("Connected to Database");
 
     db.createCollection("schedule", function(err, collection){
       if (err) throw err;
-      console.log("Created collection");
 
       collection.insert(schedule, function(err, records){
         if(err) throw err;
-
-        console.log("Record added as " + records[0]._id);
-
       });
     });
   });
 }
 
-function getschedulefromdb(){
+function getschedulefromdb(res){
   MongoClient.connect(mongourl, function(err, db){
     db.createCollection("schedule", function(err,collection){
-      collection.find().toArray(function(err, docs){
-        console.log(docs);
+      collection.find().each(function(err, doc){
+        if(null != doc) res.write(doc);//console.dir(doc);
+        //res.end(docs, 'utf8');
       });
     });
   });
+  res.end();
 }
 
 function needscheduleupdate(){
@@ -83,23 +124,26 @@ function needscheduleupdate(){
 function parsedomfor(data, sitendx) {
   switch(sitendx){
     case ZOOMZOOM_NDX:
+      zoomparser.write(data);
+      zoomparser.end();
+      //res.end(trackname +  " " + trackdate , "utf8");
     //html body center div#container div#main-body div#content-right div.t2013 div.t2013Header a div.t2013Name (text)
     break;
+
+    case KEIGWINS_NDX:
+      //html->body->div#wrapper->div#contentContainer->div->div#contentBox->table.datatable->tbody->tr.datable->td->table->tbody->tr->td->a
+      break;
   }
-  //Keigwins
-  //html->body->div#wrapper->div#contentContainer->div->div#contentBox->table.datatable->tbody->tr.datable->td->table->tbody->tr->td->a
+
 }
 
-function getschedulefromsite(backendhost, schedulepath, sitendx){
+function updateschedulefromsite(backendhost, schedulepath, sitendx){
 
 	http.get({ host: backendhost, path: schedulepath, }, function(res) {
-  		//console.log("statusCode: ", res.statusCode);
-  		//console.log("headers: ", res.headers);
-		
+
   		res.on('data', function(d) {
         process.stdout.write(d);
         parsedomfor(d, sitendx);
-        return d;
 		});
 
 	}).on('error', function(e) {
@@ -111,35 +155,24 @@ function getschedulefromsite(backendhost, schedulepath, sitendx){
 function getallschedulesfromsites(res) {
 
   // Check last update time to determine if we need schedule refresh 
-  console.log("check for update");
   if (needscheduleupdate()){
-    console.log("do check for updates");
+      
+    // Should look up list of uri's from couch db
+    // iterate over uri's and retrieve schedules
     for (var i = sites.url.length - 1; i >= 0; i--) {
-       getschedulefromsite(sites.url[i], sites.path[i], i);
+       updateschedulefromsite(sites.url[i], sites.path[i], i);
     };
   }
 
-  console.log("check done");
-  // Should look up list of uri's from couch db
+  getschedulefromdb(res);
 
-  // iterate over uri's and retrieve schedules
-  
-
-  // put schedules in db
-  var schedule = {name: "", track: "", groups: "", cost:"", services:"", notes: ""};
-
-  return data;
 }
 
 
 http.createServer(function(req,res) {
   res.writeHead(200, {'Content-Type':'text/plain'});
-  //res.writeHead(200, {'Content-Type':'text/html'});
   var query = url.parse(req.url).query;
-  console.log("hit");
-  var data = getallschedulesfromsites(res);
-  console.log("all data returned =" + data);
-  res.end(data);
-  //res.end('hit','utf8');
-}).listen(8080)
-console.log('Server running at 8080');
+  getallschedulesfromsites(res);
+  res.end('hit','utf8');
+}).listen(8380)
+console.log('Server running at 8380');
