@@ -13,7 +13,7 @@ var lastupdate;
 var checkdays = 1;
 
 var sites = {
-  url:["z2trackdays.com"],//,"letsridetrackdays.com","keigwins.com"],
+  url:["z2trackdays.com" ,"letsridetrackdays.com","keigwins.com"],
   path:["/ti/z2/content/calendar.html","/index.php?option=com_ayelshop&view=category&path=34&Itemid=41","/events_schedule.php"],
   name:["Zoom Zoom","Let\'s Ride","Keigwins"]
 };
@@ -28,10 +28,12 @@ var currState = "none";
 var trackname = "";
 var trackdate = "";
 
+var globalDb = null;
+
 var zoomparser = new htmlparser.Parser({
 
   onopentag: function(name, attribs){
-      if (name=="a" && attribs.href.indexOf("category=") > 1)
+      if (name=="a" && attribs.href && attribs.href.indexOf("category=") > 1)
       {
         currState = startstate;
       }
@@ -50,7 +52,9 @@ var zoomparser = new htmlparser.Parser({
         currState = nostate; 
 
         // put schedules in db
-        addscheduletodb("Zoom Zoom",trackname,trackdate);
+        if(trackname != null && trackdate != null){
+          addscheduletodb(sites.name[ZOOMZOOM_NDX],trackname,new Date(Date.parse(trackdate,"DD, dd, MM, yyyy")));
+        }
 
       }
   },
@@ -58,34 +62,126 @@ var zoomparser = new htmlparser.Parser({
   }
 });
 
+var letsrideparser = new htmlparser.Parser({
+
+  onopentag: function(name, attribs){
+      if(name == "div" && attribs.class && attribs.class == "name"){
+        currState = startstate;
+      }
+      else if (currState == startstate && name=="a" && attribs.href && attribs.href.indexOf("=com_ayelshop") > 1)
+      {
+        currState = datestate;
+      }
+  },
+  ontext: function(text){
+      if (currState == datestate) 
+      {
+        var dateAndTitle = text.split("-");
+        if (dateAndTitle.length > 1) {
+          trackdate = dateAndTitle[0].trim();
+          trackname = dateAndTitle[1].trim();
+          currState = nostate;
+          // put schedules in db
+          if(trackname != null && trackdate != null){
+            addscheduletodb(sites.name[LETSRIDE_NDX],trackname,new Date(Date.parse(trackdate,"DD, dd, MM, yyyy")));
+          }
+        }
+
+      }
+  },
+  onclosetag: function(tagname){
+  }
+});
+
+var keigwinparser = new htmlparser.Parser({
+
+  onopentag: function(name, attribs){
+      if (name=="tr" && attribs.class && attribs.class == "datatable")
+      {
+        currState = startstate;
+      }
+      else if(currState == startstate && name == "a" && attribs.href && attribs.href.indexOf("events_roster") >= 0){
+        currState = datestate;
+      }
+      else if(name == "td" && currState == datestate){
+        currState = titlestate;
+      }
+  },
+  ontext: function(text){
+      if(currState == datestate){
+        var eventdate = text.split("|");
+        if(eventdate.length > 1){
+          trackdate = eventdate[0].trim();
+          trackdate = trackdate + " 2013";
+        }
+        
+      }
+      else if (currState == titlestate) 
+      {
+        trackname = text;
+        currState = nostate; 
+
+        // put schedules in db
+        if(trackname != null && trackdate != null){
+          addscheduletodb(sites.name[KEIGWINS_NDX],trackname,new Date(Date.parse(trackdate,"MM dd yyyy")));
+        }
+
+      }
+  },
+  onclosetag: function(tagname){
+  }
+});
+
+
+
+MongoClient.connect(mongourl, function(err, db){
+  if(err) throw err;
+  globalDb = db;
+});
+
+
 function addscheduletodb(club, trackname, trackdate) {
-
   var schedule = {name: club, track: trackname, groups: "", cost:"", services:"", notes: "", date: trackdate};
+  
 
-  MongoClient.connect(mongourl, function(err, db){
-    
-    if(err) throw err;
-
-    db.createCollection("schedule", function(err, collection){
+    globalDb.createCollection("schedule", function(err, collection){
       if (err) throw err;
 
       collection.insert(schedule, function(err, records){
         if(err) throw err;
       });
+  });
+
+}
+
+
+function resetdb(){
+
+  MongoClient.connect(mongourl, function(err, db){
+    if (err) throw err;
+    
+    db.dropCollection("schedule", function(){
     });
+
   });
 }
 
 function getschedulefromdb(res){
+  var jsonresults = [];
   MongoClient.connect(mongourl, function(err, db){
     db.createCollection("schedule", function(err,collection){
-      collection.find().each(function(err, doc){
-        if(null != doc) res.write(doc);//console.dir(doc);
-        //res.end(docs, 'utf8');
-      });
+      collection.find({}, {'sort':'name'}).toArray(function(err, docs){
+        res.end(JSON.stringify(docs));
+      })
+      //collection.find().each(function(err, doc){
+      //  if(null != doc) {
+      //    console.dir(doc);
+      //    jsonresults.push(doc);
+      //  }
+      //});
+      //res.end(JSON.stringify(jsonresults));
     });
   });
-  res.end();
 }
 
 function needscheduleupdate(){
@@ -126,12 +222,15 @@ function parsedomfor(data, sitendx) {
     case ZOOMZOOM_NDX:
       zoomparser.write(data);
       zoomparser.end();
-      //res.end(trackname +  " " + trackdate , "utf8");
-    //html body center div#container div#main-body div#content-right div.t2013 div.t2013Header a div.t2013Name (text)
     break;
 
+    case LETSRIDE_NDX:
+      letsrideparser.write(data);
+      letsrideparser.end();
+    break;
     case KEIGWINS_NDX:
-      //html->body->div#wrapper->div#contentContainer->div->div#contentBox->table.datatable->tbody->tr.datable->td->table->tbody->tr->td->a
+      keigwinparser.write(data);
+      keigwinparser.end();
       break;
   }
 
@@ -156,23 +255,35 @@ function getallschedulesfromsites(res) {
 
   // Check last update time to determine if we need schedule refresh 
   if (needscheduleupdate()){
-      
+
+    resetdb();
+
     // Should look up list of uri's from couch db
     // iterate over uri's and retrieve schedules
     for (var i = sites.url.length - 1; i >= 0; i--) {
-       updateschedulefromsite(sites.url[i], sites.path[i], i);
+      updateschedulefromsite(sites.url[i], sites.path[i], i);
     };
+
+    lastupdate = new Date();
   }
 
-  getschedulefromdb(res);
+  res.end();
+  //getschedulefromdb(res);
 
 }
 
 
 http.createServer(function(req,res) {
-  res.writeHead(200, {'Content-Type':'text/plain'});
+  res.writeHead(200, {'Content-Type':'application/json'});
   var query = url.parse(req.url).query;
-  getallschedulesfromsites(res);
-  res.end('hit','utf8');
-}).listen(8380)
-console.log('Server running at 8380');
+  if(req.url == "/refresh")
+  {
+    getallschedulesfromsites(res);
+  }
+  else
+  {
+    getschedulefromdb(res);
+  }
+
+}).listen(8080)
+console.log('Server running at 8080');
