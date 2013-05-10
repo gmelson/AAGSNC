@@ -5,7 +5,7 @@ var url = require('url')
   , format = require('util').format
   , htmlparser = require('htmlparser2');
 
-var mongourl = 'mongodb://track:trackdays@127.0.0.1:27017/schedule'
+var mongourl = 'mongodb://track:trackdays@localhost:27017/schedule'
 var ZOOMZOOM_NDX = 0;
 var LETSRIDE_NDX = 1;
 var KEIGWINS_NDX = 2;
@@ -161,6 +161,7 @@ function resetdb(){
     if (err) throw err;
     
     db.dropCollection("schedule", function(){
+      console.log("all data dropped");
     });
 
   });
