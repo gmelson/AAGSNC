@@ -1,0 +1,10 @@
+application: pytrackdays
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /
+  script: trackdays.py
+- url: /.*
+  script: trackdays.py

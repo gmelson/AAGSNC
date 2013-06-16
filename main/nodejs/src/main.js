@@ -1,11 +1,16 @@
 
 var url = require('url')
   , http = require('http')
-  , MongoClient = require('mongodb').MongoClient
   , format = require('util').format
   , htmlparser = require('htmlparser2');
 
-var mongourl = 'mongodb://track:trackdays@localhost:27017/schedule'
+var helenus = require('helenus'),
+      pool = new helenus.ConnectionPool({
+        hosts      : ['127.0.0.1:9160'],
+        keyspace : 'tracks',
+        cqlVersion : '3.0.0'
+      });
+
 var ZOOMZOOM_NDX = 0;
 var LETSRIDE_NDX = 1;
 var KEIGWINS_NDX = 2;
@@ -27,8 +32,6 @@ var datestate = 3;
 var currState = "none";
 var trackname = "";
 var trackdate = "";
-
-var globalDb = null;
 
 var zoomparser = new htmlparser.Parser({
 
@@ -134,54 +137,64 @@ var keigwinparser = new htmlparser.Parser({
 
 
 
-MongoClient.connect(mongourl, function(err, db){
-  if(err) throw err;
-  globalDb = db;
-});
-
-
 function addscheduletodb(club, trackname, trackdate) {
-  var schedule = {name: club, track: trackname, groups: "", cost:"", services:"", notes: "", date: trackdate};
-  
 
-    globalDb.createCollection("schedule", function(err, collection){
-      if (err) throw err;
+  pool.connect(function(err, keyspace){
+      if(err){
+        throw(err);
+      } 
+ 
+      //keyspace.get('schedules', function(err, cf){
+      //  if (err) {
+      //    throw(err);
+       // }
 
-      collection.insert(schedule, function(err, records){
-        if(err) throw err;
-      });
-  });
+      //  cf.insert(club, {'name':club,'track':trackname,'groups':'','cost':'','services':'','notes':'','date':trackdate}, function(err){
+       //   if (err) {
+       //     throw(err);
+       //   }
+       // });
 
+      //});
+      console.log('inserting club = ' + club);
+      pool.cql("INSERT INTO schedules (name, track,date) VALUES(?,?,?)", [club,trackname,''+ trackdate]);
+    });
 }
 
+pool.on('error', function(err){
+    console.error(err.name, err.message);
+  });
 
 function resetdb(){
 
-  MongoClient.connect(mongourl, function(err, db){
-    if (err) throw err;
-    
-    db.dropCollection("schedule", function(){
-      console.log("all data dropped");
-    });
-
-  });
 }
 
 function getschedulefromdb(res){
-  var jsonresults = [];
-  MongoClient.connect(mongourl, function(err, db){
-    db.createCollection("schedule", function(err,collection){
-      collection.find({}, {'sort':'name'}).toArray(function(err, docs){
-        res.end(JSON.stringify(docs));
-      })
-      //collection.find().each(function(err, doc){
-      //  if(null != doc) {
-      //    console.dir(doc);
-      //    jsonresults.push(doc);
-      //  }
-      //});
-      //res.end(JSON.stringify(jsonresults));
-    });
+  pool.connect(function(err, keyspace){
+    if(err){
+      throw(err);
+    } else {
+
+      pool.cql("SELECT * FROM schedules", function(err, results){
+        if(err){
+          throw(err);
+        }
+        results.forEach(function(row){
+          //gets the column with the name 'foo' of each row
+          console.log(row.get('name'));
+          //res.write(row.get('name'));
+          //res.write(row.get('track'));
+          //res.write(row.get('groups'));
+          //res.write(row.get('cost'));
+          //res.write(row.get('services'));
+          //res.write(row.get('notes'));
+          //res.write(row.get('date'));
+        });
+
+        //res.end(JSON.stringify(docs));
+      });
+
+    }
   });
 }
 
@@ -273,7 +286,21 @@ function getallschedulesfromsites(res) {
 
 }
 
+function pinggae(res) {
+  http.get({ host: 'pytrackdays.appspot.com', path: '/update', }, function(res) {
 
+      res.on('data', function(d) {
+        process.stdout.write(d);
+        res.end();
+    });
+
+  }).on('error', function(e) {
+      console.error(e);
+    });  
+}
+
+//commands:
+//  refresh ; gettracks; pingback
 http.createServer(function(req,res) {
   res.writeHead(200, {'Content-Type':'application/json'});
   var query = url.parse(req.url).query;
@@ -281,10 +308,15 @@ http.createServer(function(req,res) {
   {
     getallschedulesfromsites(res);
   }
-  else
+  else if(req.url == "/gettracks")
   {
     getschedulefromdb(res);
   }
+  else if(req.url == "/pingback")
+  {
+    pinggae(res);
+  }
+
 
 }).listen(8080)
 console.log('Server running at 8080');
