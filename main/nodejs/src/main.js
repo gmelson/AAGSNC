@@ -182,7 +182,7 @@ function getschedulefromdb(res){
         results.forEach(function(row){
           //gets the column with the name 'foo' of each row
           console.log(row.get('name'));
-          //res.write(row.get('name'));
+          res.write(row.get('name').value);
           //res.write(row.get('track'));
           //res.write(row.get('groups'));
           //res.write(row.get('cost'));
@@ -190,7 +190,7 @@ function getschedulefromdb(res){
           //res.write(row.get('notes'));
           //res.write(row.get('date'));
         });
-
+        res.end();
         //res.end(JSON.stringify(docs));
       });
 
@@ -286,12 +286,12 @@ function getallschedulesfromsites(res) {
 
 }
 
-function pinggae(res) {
+function pinggae(result) {
   http.get({ host: 'pytrackdays.appspot.com', path: '/update', }, function(res) {
 
-      res.on('data', function(d) {
+    res.on('data', function(d) {
         process.stdout.write(d);
-        res.end();
+        result.end();
     });
 
   }).on('error', function(e) {

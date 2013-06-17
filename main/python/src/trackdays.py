@@ -1,3 +1,4 @@
+import logging
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import urlfetch
@@ -30,9 +31,13 @@ class MainPage(webapp.RequestHandler):
         proxies = Proxy.query()
         for proxy in proxies: 
             try:
-                result = urlfetch.fetch('http://' + proxy.proxiedip + '/gettracks')
+                url = 'http://' + proxy.proxiedip + ':8080/gettracks'
+                logging.info('url to fetch ' + url)
+                result = urlfetch.fetch(url)
+                logging.info('result from proxied server ' + result)
                 self.response.out.write(result.content)        
             except Exception:
+                logging.info('error trying to request ' + url)
                 continue
 
 
