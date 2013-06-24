@@ -4,6 +4,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import urlfetch
 
 from proxy import Proxy
+from schedule import Schedule
 
 class UpdatePage(webapp.RequestHandler):
                 
@@ -11,8 +12,9 @@ class UpdatePage(webapp.RequestHandler):
         proxy = None
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write('Update successful!')
-
-        ip = self.request.remote_addr;
+        json = self.request.get('json')
+        logging.info('full url of proxied server ' + self.request.url)
+        ip = self.request.remote_addr
         p = Proxy.query()
         for _p in p:
             if _p.proxiedip == ip:
@@ -22,16 +24,27 @@ class UpdatePage(webapp.RequestHandler):
             proxy = Proxy(proxiedip = ip)
             proxy.put()
 
+class PushData(webapp.RequestHandler):
+    def post(self):
+        #jsondata = self.request.get('jsondata')
+        s = Schedule.query()
+        for _s in s:
+            if _s.name == 'GAM':
+                schedule = _s
+                break            
+        if not schedule:
+            schedule = Schedule(name = 'GAM')
+        schedule.jsondata = jsondata    
+        schedule.put()
+        
+
 class MainPage(webapp.RequestHandler):
     
-                
-    def get(self):
-        self.response.headers['Content-Type'] = 'application/json'
-        #self.response.out.write(redirectip)
+    def getProxiedTracks(self):
         proxies = Proxy.query()
         for proxy in proxies: 
             try:
-                url = 'http://' + proxy.proxiedip + ':8080/gettracks'
+                url = 'http://' + proxy.proxiedip + ':8180/gettracks'
                 logging.info('url to fetch ' + url)
                 result = urlfetch.fetch(url)
                 logging.info('result from proxied server ' + result)
@@ -39,9 +52,20 @@ class MainPage(webapp.RequestHandler):
             except Exception:
                 logging.info('error trying to request ' + url)
                 continue
+        
+                
+    def get(self):
+        self.response.headers['Content-Type'] = 'application/json'
+        schedules = Schedule.query()
+        for schedule in schedules :
+            try:
+                self.response.out.write(schedule.jsondata)
+            except Exception:
+                logging.info('error getting schedule from db')
+                continue
 
 
-application = webapp.WSGIApplication([('/', MainPage),('/update', UpdatePage)], debug=True)
+application = webapp.WSGIApplication([('/', MainPage),('/update', UpdatePage), ('/push'), PushData], debug=True)
 
 
 def main():

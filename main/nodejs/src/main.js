@@ -4,6 +4,7 @@ var url = require('url')
   , format = require('util').format
   , htmlparser = require('htmlparser2');
 
+var querystring = require('querystring'); 
 var helenus = require('helenus'),
       pool = new helenus.ConnectionPool({
         hosts      : ['127.0.0.1:9160'],
@@ -169,6 +170,8 @@ function resetdb(){
 
 }
 
+var arrayOfSchedules = [];
+
 function getschedulefromdb(res){
   pool.connect(function(err, keyspace){
     if(err){
@@ -182,16 +185,17 @@ function getschedulefromdb(res){
         results.forEach(function(row){
           //gets the column with the name 'foo' of each row
           console.log(row.get('name'));
-          res.write(row.get('name').value);
-          //res.write(row.get('track'));
-          //res.write(row.get('groups'));
-          //res.write(row.get('cost'));
-          //res.write(row.get('services'));
-          //res.write(row.get('notes'));
-          //res.write(row.get('date'));
+          var _name = row.get('name').value;
+          var _track = row.get('track').value;
+          var _groups = row.get('groups').value;
+          var _cost = row.get('cost').value;
+          var _services = row.get('services').value;
+          var _notes  = row.get('notes').value;
+          var _date = row.get('date').value;
+          arrayOfSchedules.push({name: _name, track: _track, date: _date, groups: _groups, cost: _cost, services: _services, notes: _notes});
         });
-        res.end();
-        //res.end(JSON.stringify(docs));
+
+        pushtogae(res, JSON.stringify(arrayOfSchedules));
       });
 
     }
@@ -299,6 +303,34 @@ function pinggae(result) {
     });  
 }
 
+function pushtogae(result, jsonString) {
+
+  var post_data = querystring.stringify({  
+    'jsondata' : jsonString  
+  }); 
+
+  var post_options = {  
+    host: 'pytrackdays.appspot.com',  
+    port: 80,  
+    path: '/push',  
+    method: 'POST',  
+    headers: {  
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length' : post_data.length
+    }  
+  };  
+    
+  var post_req = http.request(post_options, function(res) {  
+    res.setEncoding('utf8');  
+    res.on('data', function (chunk) {  
+      console.log('Response: ' + chunk);  
+    });  
+  });
+  post_req.write(post_data);  
+  post_req.end();
+  result.end();
+}
+
 //commands:
 //  refresh ; gettracks; pingback
 http.createServer(function(req,res) {
@@ -318,5 +350,5 @@ http.createServer(function(req,res) {
   }
 
 
-}).listen(8080)
-console.log('Server running at 8080');
+}).listen(8180)
+console.log('Server running at 8180');
