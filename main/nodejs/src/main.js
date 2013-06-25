@@ -305,18 +305,14 @@ function pinggae(result) {
 
 function pushtogae(result, jsonString) {
 
-  var post_data = querystring.stringify({  
-    'jsondata' : jsonString  
-  }); 
-
   var post_options = {  
     host: 'pytrackdays.appspot.com',  
     port: 80,  
-    path: '/push',  
+    path: '/update',  
     method: 'POST',  
     headers: {  
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length' : post_data.length
+      'Content-Type': 'application/json',
+      'Content-Length' : jsonString.length
     }  
   };  
     
@@ -326,9 +322,9 @@ function pushtogae(result, jsonString) {
       console.log('Response: ' + chunk);  
     });  
   });
-  post_req.write(post_data);  
+  post_req.write(jsonString);  
   post_req.end();
-  result.end();
+  result.end('update complete');
 }
 
 //commands:
@@ -340,7 +336,7 @@ http.createServer(function(req,res) {
   {
     getallschedulesfromsites(res);
   }
-  else if(req.url == "/gettracks")
+  else if(req.url == "/update")
   {
     getschedulefromdb(res);
   }
