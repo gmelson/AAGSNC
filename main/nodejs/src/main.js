@@ -15,24 +15,35 @@ var helenus = require('helenus'),
 var ZOOMZOOM_NDX = 0;
 var LETSRIDE_NDX = 1;
 var KEIGWINS_NDX = 2;
+var PTT_NDX = 3;
 var lastupdate;
 var checkdays = 1;
 
 var sites = {
-  url:["z2trackdays.com" ,"letsridetrackdays.com","keigwins.com"],
-  path:["/ti/z2/content/calendar.html","/index.php?option=com_ayelshop&view=category&path=34&Itemid=41","/events_schedule.php"],
-  name:["Zoom Zoom","Let\'s Ride","Keigwins"]
+  url:["z2trackdays.com" ,"letsridetrackdays.com","keigwins.com","pacifictracktime.com"],
+  path:["/ti/z2/content/calendar.html","/index.php?option=com_ayelshop&view=category&path=34&Itemid=41","/events_schedule.php","/index.php/component/com_eventbooking/Itemid,197/category_id,1/view,category/"],
+  name:["Zoom Zoom","Let\'s Ride","Keigwins","Pacific Track Time"]
 };
 
 var nostate = 0;
 var startstate = 1;
 var titlestate = 2;
 var datestate = 3;
+var moneystate = 4;
+var transitionstate = -1;
 
 
 var currState = "none";
 var trackname = "";
 var trackdate = "";
+var trackcost = "";
+
+function resetState(){
+  currState = nostate;
+  trackname = "";
+  trackdate = "";
+  trackcost = "";
+}
 
 var zoomparser = new htmlparser.Parser({
 
@@ -47,17 +58,17 @@ var zoomparser = new htmlparser.Parser({
   },
   ontext: function(text){
       if(currState == titlestate){
-        trackname = text;
+        trackname = text.trim();
         currState = datestate;
       }
       else if (currState == datestate) 
       {
-        trackdate = text;
-        currState = nostate; 
+        trackdate = text.trim();
 
         // put schedules in db
         if(trackname != null && trackdate != null){
-          addscheduletodb(sites.name[ZOOMZOOM_NDX],trackname,new Date(Date.parse(trackdate,"DD, dd, MM, yyyy")));
+          addscheduletodb(sites.name[ZOOMZOOM_NDX],trackname,new Date(Date.parse(trackdate,"DD, dd, MM, yyyy")), trackcost);
+          resetState();
         }
 
       }
@@ -69,12 +80,15 @@ var zoomparser = new htmlparser.Parser({
 var letsrideparser = new htmlparser.Parser({
 
   onopentag: function(name, attribs){
-      if(name == "div" && attribs.class && attribs.class == "name"){
+      if(currState == nostate && name == "div" && attribs.class && attribs.class == "name"){
         currState = startstate;
       }
       else if (currState == startstate && name=="a" && attribs.href && attribs.href.indexOf("=com_ayelshop") > 1)
       {
         currState = datestate;
+      }
+      else if( currState = transitionstate && attribs.class && attribs.class == "price"){
+        currState = moneystate;
       }
   },
   ontext: function(text){
@@ -84,14 +98,22 @@ var letsrideparser = new htmlparser.Parser({
         if (dateAndTitle.length > 1) {
           trackdate = dateAndTitle[0].trim();
           trackname = dateAndTitle[1].trim();
-          currState = nostate;
-          // put schedules in db
-          if(trackname != null && trackdate != null){
-            addscheduletodb(sites.name[LETSRIDE_NDX],trackname,new Date(Date.parse(trackdate,"DD, dd, MM, yyyy")));
-          }
+      
+          currState = transitionstate;
+
         }
 
       }
+      else if(currState == moneystate){
+        trackcost = text.trim();
+
+          // put schedules in db
+        if(trackname != null && trackdate != null){
+          addscheduletodb(sites.name[LETSRIDE_NDX],trackname,new Date(Date.parse(trackdate,"MM/dd/yyyy")), trackcost);
+          resetState();
+        }        
+      }
+
   },
   onclosetag: function(tagname){
   }
@@ -123,11 +145,51 @@ var keigwinparser = new htmlparser.Parser({
       else if (currState == titlestate) 
       {
         trackname = text;
-        currState = nostate; 
 
         // put schedules in db
         if(trackname != null && trackdate != null){
-          addscheduletodb(sites.name[KEIGWINS_NDX],trackname,new Date(Date.parse(trackdate,"MM dd yyyy")));
+          addscheduletodb(sites.name[KEIGWINS_NDX],trackname,new Date(Date.parse(trackdate,"MM dd yyyy")), trackcost);
+          resetState();
+        }
+
+      }
+  },
+  onclosetag: function(tagname){
+  }
+});
+
+var pttparser = new htmlparser.Parser({
+
+  onopentag: function(name, attribs){
+      if (name=="h1" && attribs.class && attribs.class == "eb_title")
+      {
+        currState = startstate;
+      }
+      else if(currState == startstate && name == "a"){
+        currState = titlestate;
+      }
+
+      else if(currState == nostate && attribs.class && attribs.class == "eb_props_price"){
+        currState = moneystate;
+      }
+  },
+  ontext: function(text){
+      if(currState == titlestate){
+        var nameanddate = text.split(' ');
+        if(nameanddate.length >1){
+          trackname = nameanddate[0].trim();
+          trackdate = nameanddate[1].trim();
+          currState = nostate;
+        }
+        
+      }
+
+      if(currState == moneystate){
+        trackcost = text;
+        // put schedules in db
+        if(trackname != null && trackdate != null){
+          addscheduletodb(sites.name[PTT_NDX],trackname,new Date(Date.parse(trackdate,"MM/dd/yyyy")), trackcost);
+          resetState();
         }
 
       }
@@ -138,27 +200,15 @@ var keigwinparser = new htmlparser.Parser({
 
 
 
-function addscheduletodb(club, trackname, trackdate) {
+function addscheduletodb(club, name, date, cost) {
 
   pool.connect(function(err, keyspace){
       if(err){
         throw(err);
-      } 
- 
-      //keyspace.get('schedules', function(err, cf){
-      //  if (err) {
-      //    throw(err);
-       // }
-
-      //  cf.insert(club, {'name':club,'track':trackname,'groups':'','cost':'','services':'','notes':'','date':trackdate}, function(err){
-       //   if (err) {
-       //     throw(err);
-       //   }
-       // });
-
-      //});
+      }  
       console.log('inserting club = ' + club);
-      pool.cql("INSERT INTO schedules (name, track,date) VALUES(?,?,?)", [club,trackname,''+ trackdate]);
+      pool.cql("INSERT INTO schedules (name, track,date,cost) VALUES(?,?,?,?)", [club, name,''+ date, cost]);
+
     });
 }
 
@@ -231,7 +281,8 @@ function needscheduleupdate(){
     days = 1;
   }
 
-  return (days >= checkdays) ? true : false;
+  //return (days >= checkdays) ? true : false;
+  return true;
 
 }
 
@@ -249,6 +300,10 @@ function parsedomfor(data, sitendx) {
     case KEIGWINS_NDX:
       keigwinparser.write(data);
       keigwinparser.end();
+      break;
+    case PTT_NDX:
+      pttparser.write(data);
+      pttparser.end();
       break;
   }
 
@@ -346,5 +401,5 @@ http.createServer(function(req,res) {
   }
 
 
-}).listen(8180)
-console.log('Server running at 8180');
+}).listen(8380)
+console.log('Server running at 8380');
