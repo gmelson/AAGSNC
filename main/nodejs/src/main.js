@@ -30,87 +30,135 @@ var startstate = 1;
 var titlestate = 2;
 var datestate = 3;
 var moneystate = 4;
+var groupstate = 5;
 var transitionstate = -1;
 
+var states = [];
 
-var currState = "none";
-var trackname = "";
-var trackdate = "";
-var trackcost = "";
+function getMyState(key){
+  var retVal = null;
 
-function resetState(){
-  currState = nostate;
-  trackname = "";
-  trackdate = "";
-  trackcost = "";
+  if(states.length > 1){
+    for (var i = states.length - 1; i >= 0; i--) {
+      if(states[i].key == key){
+        retVal = states[i];
+      }
+    };
+  }
+  return retVal;
+}
+
+function nextState(_key, _next){
+  console.log('\nnextState = ' + _next + ' for key = ' + _key);
+
+  var mystate = getMyState(_key);
+  if(mystate != null){
+    mystate.currState = _next;
+  }
+  else{
+    states.push({key: _key, currState: _next, trackname: "",trackdate: "", trackcost: "", groups: ""})
+  }
+}
+
+function resetState(key){
+  console.log('\nresetState for key = ' + key);
+
+  var _state = getMyState(key);
+  _state.currState = nostate;
+  _state.trackname = "";
+  _state.trackdate = "";
+  _state.trackcost = "";
+  _state.groups = "";
+}
+
+function isState(__state, checkValue) {
+  var retVal = false;
+  if(__state && __state.currState == checkValue) {
+    retVal = true;
+  }
+  return retVal;
 }
 
 var zoomparser = new htmlparser.Parser({
 
   onopentag: function(name, attribs){
+      var _state = getMyState(ZOOMZOOM_NDX);
+
       if (name=="a" && attribs.href && attribs.href.indexOf("category=") > 1)
       {
-        currState = startstate;
+        nextState(ZOOMZOOM_NDX, startstate);
       }
-      else if(name == "h1" && currState == startstate){
-        currState = titlestate;
+      else if(name == "h1" && isState(_state, startstate)) {
+        nextState(ZOOMZOOM_NDX, titlestate);
+      }
+      else if (name == "div" && attribs.class=="t2013ItemPrice" ){
+        nextState(ZOOMZOOM_NDX, moneystate);
       }
   },
   ontext: function(text){
-      if(currState == titlestate){
-        trackname = text.trim();
-        currState = datestate;
+      var _state = getMyState(ZOOMZOOM_NDX);
+      if(isState(_state, titlestate)){
+        _state.trackname = text.trim();
+        _state.currState = datestate; //Hack
       }
-      else if (currState == datestate) 
-      {
-        trackdate = text.trim();
+      else if (isState(_state, datestate) ){
+        _state.trackdate = text.trim();
+        _state.currState = nostate; //Another hack
+      }
+      else if(isState(_state, moneystate)){
+        _state.trackcost = text.trim();
 
         // put schedules in db
-        if(trackname != null && trackdate != null){
-          addscheduletodb(sites.name[ZOOMZOOM_NDX],trackname,new Date(Date.parse(trackdate,"DD, dd, MM, yyyy")), trackcost);
-          resetState();
+        if(_state.trackname != null && _state.trackdate != null){
+          addscheduletodb(sites.name[_state.key],_state.trackname,new Date(Date.parse(_state.trackdate,"DD, dd, MM, yyyy")), _state.trackcost);
+          resetState(ZOOMZOOM_NDX);
         }
 
       }
   },
   onclosetag: function(tagname){
+    
   }
 });
 
 var letsrideparser = new htmlparser.Parser({
 
   onopentag: function(name, attribs){
-      if(currState == nostate && name == "div" && attribs.class && attribs.class == "name"){
-        currState = startstate;
+      var _state  = getMyState(LETSRIDE_NDX);
+
+      if(null == _state) nextState(LETSRIDE_NDX, nostate);
+
+      if(isState(_state, nostate) && name == "div" && attribs.class && attribs.class == "name"){
+        nextState(LETSRIDE_NDX, startstate);
       }
-      else if (currState == startstate && name=="a" && attribs.href && attribs.href.indexOf("=com_ayelshop") > 1)
+      else if (isState(_state,startstate) && name=="a" && attribs.href && attribs.href.indexOf("=com_ayelshop") > 1)
       {
-        currState = datestate;
+        nextState(LETSRIDE_NDX, datestate);
       }
-      else if( currState = transitionstate && attribs.class && attribs.class == "price"){
-        currState = moneystate;
+      else if( isState(_state, transitionstate) && attribs.class && attribs.class == "price"){
+        nextState(LETSRIDE_NDX, moneystate);
       }
   },
   ontext: function(text){
-      if (currState == datestate) 
+    var _state  = getMyState(LETSRIDE_NDX);
+      if (isState(_state, datestate)) 
       {
         var dateAndTitle = text.split("-");
         if (dateAndTitle.length > 1) {
-          trackdate = dateAndTitle[0].trim();
-          trackname = dateAndTitle[1].trim();
+          _state.trackdate = dateAndTitle[0].trim();
+          _state.trackname = dateAndTitle[1].trim();
       
-          currState = transitionstate;
-
+          _state.currState = transitionstate;
         }
 
       }
-      else if(currState == moneystate){
-        trackcost = text.trim();
+      else if(isState(_state, moneystate)){
+        _state.trackcost = text.trim();
 
           // put schedules in db
-        if(trackname != null && trackdate != null){
-          addscheduletodb(sites.name[LETSRIDE_NDX],trackname,new Date(Date.parse(trackdate,"MM/dd/yyyy")), trackcost);
-          resetState();
+        if(_state.trackname != null && _state.trackdate != null){
+          addscheduletodb(sites.name[_state.key],_state.trackname,new Date(Date.parse(_state.trackdate,"MM/dd/yyyy")), _state.trackcost);
+          resetState(LETSRIDE_NDX);
         }        
       }
 
@@ -122,34 +170,55 @@ var letsrideparser = new htmlparser.Parser({
 var keigwinparser = new htmlparser.Parser({
 
   onopentag: function(name, attribs){
+      var _state  = getMyState(KEIGWINS_NDX);
+
       if (name=="tr" && attribs.class && attribs.class == "datatable")
       {
-        currState = startstate;
+        nextState(KEIGWINS_NDX, startstate);
       }
-      else if(currState == startstate && name == "a" && attribs.href && attribs.href.indexOf("events_roster") >= 0){
-        currState = datestate;
+      else if(isState(_state, startstate) && name == "a" && attribs.href && attribs.href.indexOf("events_roster") >= 0){
+        nextState(KEIGWINS_NDX, datestate);
       }
-      else if(name == "td" && currState == datestate){
-        currState = titlestate;
+      else if(name == "td" && isState(_state, datestate)){
+        nextState(KEIGWINS_NDX, titlestate);
       }
+      else if(name == "td" && isState(_state, titlestate)){
+        nextState(KEIGWINS_NDX, groupstate);
+      }
+      else if(name == "td" && isState(_state, groupstate)){
+        nextState(KEIGWINS_NDX, moneystate);
+      }
+
+
   },
   ontext: function(text){
-      if(currState == datestate){
+
+      var _state  = getMyState(KEIGWINS_NDX);
+
+      if(isState(_state,datestate)){
         var eventdate = text.split("|");
         if(eventdate.length > 1){
-          trackdate = eventdate[0].trim();
-          trackdate = trackdate + " 2013";
+          _state.trackdate = eventdate[0].trim();
+          _state.trackdate = _state.trackdate + " 2013";
         }
         
       }
-      else if (currState == titlestate) 
+      else if (isState(_state,titlestate) && _state.trackname == "" )
       {
-        trackname = text;
+        _state.trackname = text;
 
+      }
+      else if(isState(_state, groupstate))
+      {
+        _state.groups = text;
+      }
+      else if(isState(_state, moneystate))
+      {
+        _state.trackcost = text.trim();
         // put schedules in db
-        if(trackname != null && trackdate != null){
-          addscheduletodb(sites.name[KEIGWINS_NDX],trackname,new Date(Date.parse(trackdate,"MM dd yyyy")), trackcost);
-          resetState();
+        if(_state.trackname != null && _state.trackdate != null){
+          addscheduletodb(sites.name[_state.key],_state.trackname,new Date(Date.parse(_state.trackdate,"MM dd yyyy")), _state.trackcost);
+          resetState(KEIGWINS_NDX);
         }
 
       }
@@ -161,35 +230,39 @@ var keigwinparser = new htmlparser.Parser({
 var pttparser = new htmlparser.Parser({
 
   onopentag: function(name, attribs){
+      var _state  = getMyState(PTT_NDX);
+
       if (name=="h1" && attribs.class && attribs.class == "eb_title")
       {
-        currState = startstate;
+        nextState(PTT_NDX, startstate);
       }
-      else if(currState == startstate && name == "a"){
-        currState = titlestate;
+      else if(isState(_state ,startstate) && name == "a"){
+        nextState(PTT_NDX,titlestate);
       }
 
-      else if(currState == nostate && attribs.class && attribs.class == "eb_props_price"){
-        currState = moneystate;
+      else if(isState(_state,nostate) && attribs.class && attribs.class == "eb_props_price"){
+        nextState(PTT_NDX,moneystate);
       }
   },
   ontext: function(text){
-      if(currState == titlestate){
+      var _state  = getMyState(PTT_NDX);
+
+      if(isState(_state,titlestate)){
         var nameanddate = text.split(' ');
         if(nameanddate.length >1){
-          trackname = nameanddate[0].trim();
-          trackdate = nameanddate[1].trim();
-          currState = nostate;
+          _state.trackname = nameanddate[0].trim();
+          _state.trackdate = nameanddate[1].trim();
+          _state.currState = nostate;
         }
         
       }
 
-      if(currState == moneystate){
-        trackcost = text;
+      if(isState(_state ,moneystate)){
+        _state.trackcost = text.trim();
         // put schedules in db
-        if(trackname != null && trackdate != null){
-          addscheduletodb(sites.name[PTT_NDX],trackname,new Date(Date.parse(trackdate,"MM/dd/yyyy")), trackcost);
-          resetState();
+        if(_state.trackname != null && _state.trackdate != null){
+          addscheduletodb(sites.name[_state.key],_state.trackname,new Date(Date.parse(_state.trackdate,"MM/dd/yyyy")), _state.trackcost);
+          resetState(PTT_NDX);
         }
 
       }
@@ -204,9 +277,10 @@ function addscheduletodb(club, name, date, cost) {
 
   pool.connect(function(err, keyspace){
       if(err){
+        console.log('\nerror inserting');
         throw(err);
       }  
-      console.log('inserting club = ' + club);
+      console.log('\ninserting club = ' + club + ' price = ' + cost);
       pool.cql("INSERT INTO schedules (name, track,date,cost) VALUES(?,?,?,?)", [club, name,''+ date, cost]);
 
     });
