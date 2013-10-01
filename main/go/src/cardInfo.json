@@ -1,0 +1,1082 @@
+{
+"docs":[
+{
+  "variant": 1,
+  "cardNumber": "4440008888888888",
+  "applicationId": 1,
+  "downloadExpDate": "2016-05-01T18:39:26.384+0000",
+  "description": "Sequent demo qVSDC card - online/offline - to deprecate as qVSDC applet is not supported",
+  "userAuthParams": [
+	{
+		"question": "DOB",
+		"answer": "10102000"
+	},
+	{
+		"question": "SSN",
+		"answer": "1234"
+	}
+	],
+	"additionalParams": [
+    {
+      "name": "TRACK1",
+      "value": "B4440008888888888^TEST/USER^12121610000000000000000000000000000000000000"
+    },
+    {
+      "name": "TRACK2",
+      "value": "4440008888888888=1231161000000000000"
+    },
+    {
+      "name": "CARD_NO",
+      "value": "4440008888888888"
+    },
+    {
+      "name": "CHIP_SERIAL_NO",
+      "value": "0ABD9091"
+    },
+    {
+      "name": "PAN_SEQUENCE_NO",
+      "value": "01"
+    }
+  ],
+  "dgi": [
+    {
+      "value": "0101",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "value": "4440008888888888D10122010123499999991F",
+          "tag": "57",
+          "belongsTo": "0101"
+        },
+        {
+          "value": "5649534120434445542056322F43415244203031",
+          "tag": "5F20",
+          "belongsTo": "0101"
+        }
+      ]
+    },
+    {
+      "value": "0202",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "value": "19C76183410FA86A1B937FDD37EF244F4255FC02B49134199BC20B39FFB2D7070DE377516D17F331AFD38A0F775B6B5E6F2B662416892C816E92638E17355DD2A161CCEB7A66A56F22D407F8D044BE66A9C3C9412CBB5D765A1A0C13CC9A72F66A57FE14E220A16D5BA8575A29351D111232A40DB77589B0405D929E159E3FBE",
+          "tag": "9F46",
+          "belongsTo": "0202"
+        },
+        {
+          "value": "03",
+          "tag": "9F47",
+          "belongsTo": "0202"
+        }
+      ]
+    },
+    {
+      "value": "0301",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "value": "4440008888888888",
+          "tag": "5A",
+          "belongsTo": "0301"
+        },
+        {
+          "value": "101231",
+          "tag": "5F24",
+          "belongsTo": "0301"
+        }
+      ]
+    },
+    {
+      "name": "8001",
+      "value": "1375FB0ECD3E26E089B640543137F189",
+      "minLength": 16,
+      "maxLength": 16
+    },
+    {
+      "value": "0E01",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "value": "4440008888888888d101220101234556",
+          "tag": "57",
+          "belongsTo": "0E01"
+        }
+      ]
+    }
+  ]
+},
+{
+  "cardNumber": "4567890123456543",
+  "applicationId": 1,
+  "nickname": "TestVmpa1",
+  "downloadExpDate": "2016-05-01T00:00:00.000+0000",
+  "description": "Sequent demo vmpa card #1",
+  "variant": 0,
+  "status": 0,
+  "userAuthParams": [
+	{
+		"question": "DOB",
+		"answer": "10102000"
+	},
+	{
+		"question": "SSN",
+		"answer": "1234"
+	}
+	],
+  "additionalParams": [
+    {
+      "name": "CARD_NO",
+      "value": "4567890123456543"
+    },
+    {
+      "name": "PAN_SEQUENCE_NO",
+      "value": "00"
+    }
+    ],
+  "dgi": [
+    {
+      "value": "0101",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "tag": "57",
+          "value": "4510130000139212D15112010000000040001F",
+          "belongsTo": "0101"
+        }
+      ]
+    },
+	{
+      "value": "3001",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "tag": "57",
+          "value": "4510130000139212D15112019040064610001F",
+          "belongsTo": "3001"
+        }
+      ]
+    },
+    {
+      "name": "8000",
+      "value": "9251CE463DA2089749D054F2EC29C1C498FE4629799BEF43E9E532C4FDE9A83B627FDCC458085DF17AE954916DCE04F4",
+      "minLength": 48,
+      "maxLength": 48
+    },
+    {
+      "name": "8001",
+      "value": "B54C9B5E5E084508B3D092E69B3BAD4C",
+      "minLength": 16,
+      "maxLength": 16
+    }
+  ]
+  },
+  {
+  "cardNumber": "4567890123456541",
+  "applicationId": 1,
+  "nickname": "TestVmpa2",
+  "downloadExpDate": "2016-05-01T00:00:00.000+0000",
+  "description": "Sequent demo vmpa card #2",
+  "variant": 0,
+  "status": 0,
+  "userAuthParams": [
+	{
+		"question": "DOB",
+		"answer": "10102000"
+	},
+	{
+		"question": "SSN",
+		"answer": "1234"
+	}
+	],
+    "additionalParams": [
+    {
+      "name": "CARD_NO",
+      "value": "4567890123456541"
+    },
+    {
+      "name": "PAN_SEQUENCE_NO",
+      "value": "00"
+    }
+    ],
+	"dgi": [
+    {
+      "value": "0101",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "tag": "57",
+          "value": "4510130000139212D15112010000000040001F",
+          "belongsTo": "0101"
+        }
+      ]
+    },
+	{
+      "value": "3001",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "tag": "57",
+          "value": "4510130000139212D15112019040064610001F",
+          "belongsTo": "3001"
+        }
+      ]
+    },
+    {
+      "name": "8000",
+      "value": "9251CE463DA2089749D054F2EC29C1C498FE4629799BEF43E9E532C4FDE9A83B627FDCC458085DF17AE954916DCE04F4",
+      "minLength": 48,
+      "maxLength": 48
+    },
+    {
+      "name": "8001",
+      "value": "B54C9B5E5E084508B3D092E69B3BAD4C",
+      "minLength": 16,
+      "maxLength": 16
+    }
+  ]
+  },
+  {
+  "cardNumber": "5000123412341234",
+  "applicationId": 2,
+  "nickname": "TestMppDemo1",
+  "downloadExpDate": "2016-05-01T00:00:00.000+0000",
+  "description": "Sequent demo mpp card #1",
+  "variant": 0,
+  "status": 0,
+  "userAuthParams": [
+	{
+		"question": "DOB",
+		"answer": "10102000"
+	},
+	{
+		"question": "SSN",
+		"answer": "1234"
+	}
+	],
+	"dgi": [
+    {
+      "value": "0101",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "tag": "56",
+          "value": "42353431333333393030303030313531335E202F5E31353132323031333330303033333330303032323232323030303131313130",
+          "belongsTo": "0101"
+        }
+      ]
+    },
+	{
+      "value": "0101",
+      "minLength": 0,
+      "maxLength": 0,
+      "tags": [
+        {
+          "tag": "9F6B",
+          "value": "5000000000000009D15122019000990000000F",
+          "belongsTo": "0101"
+        }
+      ]
+    }
+  ]
+  },
+  {
+  "variant": 0,
+  "cardNumber": "1234567890ABCDEF",
+  "applicationId": 6,
+  "downloadExpDate": "2016-05-01T18:39:26.384+0000",
+  "contentGroup": "Mifare4Mobile_bin_range",
+  "description": "Sequent demo M4M card corresponding to sample data",
+  "additionalParams": [
+    {
+      "name": "APPLICATION_LABEL",
+      "value": "TESTING 123"
+    },
+    {
+      "name": "MF_DATA_ID",
+      "value": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "name": "SERVICE_OBJECT_ID",
+      "value": "SEQUENT1"
+    },
+    {
+      "name": "ACCESS_BEGIN_DATE",
+      "value": "2013-07-04T12:08:56.235-0700"
+    },
+    {
+      "name": "ACCESS_END_DATE",
+      "value": "2013-08-04T12:08:56.235-0700"
+    },
+    {
+      "name": "SECTOR_OFFSET",
+      "value": "FFFF"
+    },
+    {
+      "name": "MAD_ID",
+      "value": "5190"
+    },
+    {
+      "name": "CONFIG_URL",
+      "value": "http://www.sequent.com/m4m_configurl?SEQUENT1"
+    },
+    {
+      "name": "FIRST_TRX_SECTOR",
+      "value": "0002"
+    },
+    {
+      "name": "PARSER_ID",
+      "value": "000102030405060708090A0B0C0D0E0F"
+    },
+    {
+      "name": "PROPRIETARY_CONTENT",
+      "value": "9003010203"
+    },
+    {
+      "name": "S0B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B1",
+      "value": "6F015190519000000000000000000000"
+    },
+    {
+      "name": "S0B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B3",
+      "value": "A0A1A2A3A4A5787788C1FFFFFFFFFFFF"
+    },
+    {
+      "name": "S1B0",
+      "value": "D247BD658D48273EEB1FDD9431EE5B71"
+    },
+    {
+      "name": "S1B1",
+      "value": "72000000000000000000000000000000"
+    },
+    {
+      "name": "S1B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S1B3",
+      "value": "5474D139224078778801FFFFFFFFFFFF"
+    },
+    {
+      "name": "S2B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B1",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B3",
+      "value": "A0A1A2A3A4A578778805000C1D5A8CD8"
+    }
+  ]
+  },
+  {
+  "variant": 0,
+  "cardNumber": "1234567890ABCDEF-A",
+  "applicationId": 6,
+  "downloadExpDate": "2016-05-01T18:39:26.384+0000",
+  "contentGroup": "Mifare4Mobile_bin_range",
+  "description": "Sequent demo M4M card corresponding to sample data",
+  "additionalParams": [
+    {
+      "name": "APPLICATION_LABEL",
+      "value": "TESTING 123"
+    },
+    {
+      "name": "MF_DATA_ID",
+      "value": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "name": "SERVICE_OBJECT_ID",
+      "value": "SEQUENTA"
+    },
+    {
+      "name": "ACCESS_BEGIN_DATE",
+      "value": "2013-07-04T12:08:56.235-0700"
+    },
+    {
+      "name": "ACCESS_END_DATE",
+      "value": "2013-08-04T12:08:56.235-0700"
+    },
+    {
+      "name": "SECTOR_OFFSET",
+      "value": "FFFF"
+    },
+    {
+      "name": "MAD_ID",
+      "value": "5190"
+    },
+    {
+      "name": "CONFIG_URL",
+      "value": "http://www.sequent.com/m4m_configurl?SEQUENTA"
+    },
+    {
+      "name": "FIRST_TRX_SECTOR",
+      "value": "0002"
+    },
+    {
+      "name": "PARSER_ID",
+      "value": "000102030405060708090A0B0C0D0E0F"
+    },
+    {
+      "name": "PROPRIETARY_CONTENT",
+      "value": "9003010203"
+    },
+    {
+      "name": "S0B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B1",
+      "value": "6F015190519000000000000000000000"
+    },
+    {
+      "name": "S0B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B3",
+      "value": "A0A1A2A3A4A5787788C1FFFFFFFFFFFF"
+    },
+    {
+      "name": "S1B0",
+      "value": "D247BD658D48273EEB1FDD9431EE5B71"
+    },
+    {
+      "name": "S1B1",
+      "value": "72000000000000000000000000000000"
+    },
+    {
+      "name": "S1B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S1B3",
+      "value": "5474D139224078778801FFFFFFFFFFFF"
+    },
+    {
+      "name": "S2B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B1",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B3",
+      "value": "A0A1A2A3A4A578778805000C1D5A8CD8"
+    }
+  ]
+  },
+  {
+  "variant": 0,
+  "cardNumber": "1234567890ABCDEF-B",
+  "applicationId": 6,
+  "downloadExpDate": "2016-05-01T18:39:26.384+0000",
+  "contentGroup": "Mifare4Mobile_bin_range",
+  "description": "Sequent demo M4M card corresponding to sample data",
+  "additionalParams": [
+    {
+      "name": "APPLICATION_LABEL",
+      "value": "TESTING 123"
+    },
+    {
+      "name": "MF_DATA_ID",
+      "value": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "name": "SERVICE_OBJECT_ID",
+      "value": "SEQUENTB"
+    },
+    {
+      "name": "ACCESS_BEGIN_DATE",
+      "value": "2013-07-04T12:08:56.235-0700"
+    },
+    {
+      "name": "ACCESS_END_DATE",
+      "value": "2013-08-04T12:08:56.235-0700"
+    },
+    {
+      "name": "SECTOR_OFFSET",
+      "value": "FFFF"
+    },
+    {
+      "name": "MAD_ID",
+      "value": "5190"
+    },
+    {
+      "name": "CONFIG_URL",
+      "value": "http://www.sequent.com/m4m_configurl?SEQUENTB"
+    },
+    {
+      "name": "FIRST_TRX_SECTOR",
+      "value": "0002"
+    },
+    {
+      "name": "PARSER_ID",
+      "value": "000102030405060708090A0B0C0D0E0F"
+    },
+    {
+      "name": "PROPRIETARY_CONTENT",
+      "value": "9003010203"
+    },
+    {
+      "name": "S0B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B1",
+      "value": "6F015190519000000000000000000000"
+    },
+    {
+      "name": "S0B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B3",
+      "value": "A0A1A2A3A4A5787788C1FFFFFFFFFFFF"
+    },
+    {
+      "name": "S1B0",
+      "value": "D247BD658D48273EEB1FDD9431EE5B71"
+    },
+    {
+      "name": "S1B1",
+      "value": "72000000000000000000000000000000"
+    },
+    {
+      "name": "S1B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S1B3",
+      "value": "5474D139224078778801FFFFFFFFFFFF"
+    },
+    {
+      "name": "S2B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B1",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B3",
+      "value": "A0A1A2A3A4A578778805000C1D5A8CD8"
+    }
+  ]
+  },
+  {
+  "variant": 0,
+  "cardNumber": "6001111111111111",
+  "nickname": "M4MTest1",
+  "applicationId": 6,
+  "downloadExpDate": "2016-05-01T18:39:26.384+0000",
+  "contentGroup": "Mifare4Mobile_bin_range",
+  "description": "Sequent demo M4M card corresponding to sample data",
+  "additionalParams": [
+    {
+      "name": "APPLICATION_LABEL",
+      "value": "TESTING 123"
+    },
+    {
+      "name": "MF_DATA_ID",
+      "value": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "name": "SERVICE_OBJECT_ID",
+      "value": "6001111111111111"
+    },
+    {
+      "name": "ACCESS_BEGIN_DATE",
+      "value": "2013-07-04T12:08:56.235-0700"
+    },
+    {
+      "name": "ACCESS_END_DATE",
+      "value": "2013-08-04T12:08:56.235-0700"
+    },
+    {
+      "name": "SECTOR_OFFSET",
+      "value": "FFFF"
+    },
+    {
+      "name": "CONFIG_URL",
+      "value": "http://www.sequent.com/m4m_configurl?SEQUENT1"
+    },
+    {
+      "name": "FIRST_TRX_SECTOR",
+      "value": "0002"
+    },
+    {
+      "name": "PARSER_ID",
+      "value": "000102030405060708090A0B0C0D0E0F"
+    },
+    {
+      "name": "PROPRIETARY_CONTENT",
+      "value": "9003010203"
+    },
+    {
+      "name": "S0B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B1",
+      "value": "6F015190519000000000000000000000"
+    },
+    {
+      "name": "S0B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B3",
+      "value": "A0A1A2A3A4A5787788C1FFFFFFFFFFFF"
+    },
+    {
+      "name": "S1B0",
+      "value": "D247BD658D48273EEB1FDD9431EE5B71"
+    },
+    {
+      "name": "S1B1",
+      "value": "72000000000000000000000000000000"
+    },
+    {
+      "name": "S1B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S1B3",
+      "value": "5474D139224078778801FFFFFFFFFFFF"
+    },
+    {
+      "name": "S2B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B1",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B3",
+      "value": "A0A1A2A3A4A578778805000C1D5A8CD8"
+    }
+  ]
+  },
+  {
+  "variant": 0,
+  "cardNumber": "6001111111111112",
+  "nickname": "M4MTest2",
+  "applicationId": 6,
+  "downloadExpDate": "2016-05-01T18:39:26.384+0000",
+  "contentGroup": "Mifare4Mobile_bin_range",
+  "description": "Sequent demo M4M card corresponding to sample data",
+  "additionalParams": [
+    {
+      "name": "APPLICATION_LABEL",
+      "value": "TESTING 123"
+    },
+    {
+      "name": "MF_DATA_ID",
+      "value": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "name": "SERVICE_OBJECT_ID",
+      "value": "6001111111111112"
+    },
+    {
+      "name": "ACCESS_BEGIN_DATE",
+      "value": "2013-07-04T12:08:56.235-0700"
+    },
+    {
+      "name": "ACCESS_END_DATE",
+      "value": "2013-08-04T12:08:56.235-0700"
+    },
+    {
+      "name": "SECTOR_OFFSET",
+      "value": "FFFF"
+    },
+    {
+      "name": "CONFIG_URL",
+      "value": "http://www.sequent.com/m4m_configurl?SEQUENT1"
+    },
+    {
+      "name": "FIRST_TRX_SECTOR",
+      "value": "0002"
+    },
+    {
+      "name": "PARSER_ID",
+      "value": "000102030405060708090A0B0C0D0E0F"
+    },
+    {
+      "name": "PROPRIETARY_CONTENT",
+      "value": "9003010203"
+    },
+    {
+      "name": "S0B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B1",
+      "value": "6F015190519000000000000000000000"
+    },
+    {
+      "name": "S0B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B3",
+      "value": "A0A1A2A3A4A5787788C1FFFFFFFFFFFF"
+    },
+    {
+      "name": "S1B0",
+      "value": "D247BD658D48273EEB1FDD9431EE5B71"
+    },
+    {
+      "name": "S1B1",
+      "value": "72000000000000000000000000000000"
+    },
+    {
+      "name": "S1B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S1B3",
+      "value": "5474D139224078778801FFFFFFFFFFFF"
+    },
+    {
+      "name": "S2B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B1",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S2B3",
+      "value": "A0A1A2A3A4A578778805000C1D5A8CD8"
+    }
+  ]
+  },
+  {
+    "variant": 0,
+    "cardNumber": "6003123456789003",
+    "nickname": "BACVISACR",
+    "applicationId": 6,
+    "downloadExpDate": "2016-05-01T18:39:26.384+0000",
+    "contentGroup": "Mifare4Mobile_bin_range",
+    "description": "Sequent demo vivocard (visa credit)",
+      "additionalParams": [
+    {
+      "name": "APPLICATION_LABEL",
+      "value": "BACVISACR"
+    },
+    {
+      "name": "SERVICE_OBJECT_ID",
+      "value": "6003123456789003"
+    },
+    {
+      "name": "ACCESS_BEGIN_DATE",
+      "value": "2013-07-04T12:08:56.235-0700"
+    },
+    {
+      "name": "ACCESS_END_DATE",
+      "value": "2013-08-04T12:08:56.235-0700"
+    },
+    {
+      "name": "SECTOR_OFFSET",
+      "value": "FFFF"
+    },
+    {
+      "name": "S0B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B1",
+      "value": "5669564F746563680000000000000000"
+    },
+    {
+      "name": "S0B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B3",
+      "value": "1298347656547F078800129834765654"
+    },
+    {
+      "name": "S1B0",
+      "value": "36303130353634333939333434373631"
+    },
+    {
+      "name": "S1B1",
+      "value": "3D323530313030303430303030363030"
+    },
+    {
+      "name": "S1B2",
+      "value": "37333532390000000000000000000000"
+    },
+    {
+      "name": "S1B3",
+      "value": "1298347656547F078800129834765654"
+    },
+    {
+      "name": "S2B0",
+      "value": "36303130353634333939333434373631"
+    },
+    {
+      "name": "S2B1",
+      "value": "5E53504F525453415554482F56414C55"
+    },
+    {
+      "name": "S2B2",
+      "value": "454C494E4B5E32353031303030343030"
+    },
+    {
+      "name": "S2B3",
+      "value": "1298347656547F078800129834765654"
+    },
+    {
+      "name": "S3B0",
+      "value": "30303630303733353239000000000000"
+    },
+    {
+      "name": "S3B1",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S3B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S3B3",
+      "value": "1298347656547F078800129834765654"
+    }
+  ]
+  },
+  {
+    "variant": 0,
+    "cardNumber": "6004123456789004",
+    "nickname": "GenMaster",
+    "applicationId": 8,
+    "downloadExpDate": "2025-10-01T18:39:26.384+0000",
+    "contentGroup": "Mifare4Mobile_bin_range",
+    "description": "Sequent demo vivocard (generic mastercard)",
+      "additionalParams": [
+    {
+      "name": "APPLICATION_LABEL",
+      "value": "GenMaster"
+    },
+    {
+      "name": "SERVICE_OBJECT_ID",
+      "value": "6004123456789004"
+    },
+    {
+      "name": "ACCESS_BEGIN_DATE",
+      "value": "2013-07-04T12:08:56.235-0700"
+    },
+    {
+      "name": "ACCESS_END_DATE",
+      "value": "2025-08-04T12:08:56.235-0700"
+    },
+    {
+      "name": "SECTOR_OFFSET",
+      "value": "FFFF"
+    },
+    {
+      "name": "S0B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B1",
+      "value": "5669564F746563680000000000000000"
+    },
+    {
+      "name": "S0B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B3",
+      "value": "1298347656547F078800129834765654"
+    }, 
+    {
+      "name": "S1B0",
+      "value": "36303130353634333939333434373631"
+    },
+    {
+      "name": "S1B1",
+      "value": "3D323530313030303430303030363030"
+    },
+    {
+      "name": "S1B2",
+      "value": "37333532390000000000000000000000"
+    },
+    {
+      "name": "S1B3",
+      "value": "1298347656547F078800129834765654"
+    },
+    { 
+      "name": "S2B0",
+      "value": "36303130353634333939333434373631"
+    },
+    {
+      "name": "S2B1",
+      "value": "5E53504F525453415554482F56414C55"
+    },
+    {
+      "name": "S2B2",
+      "value": "454C494E4B5E32353031303030343030"
+    },
+    {
+      "name": "S2B3",
+      "value": "1298347656547F078800129834765654"
+    },
+    {
+      "name": "S3B0",
+      "value": "30303630303733353239000000000000"
+    },
+    {
+      "name": "S3B1",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S3B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S3B3",
+      "value": "1298347656547F078800129834765654"
+    }
+  ]
+  },
+  {
+    "variant": 0,
+    "cardNumber": "6074456724319453",
+    "nickname": "Sports Authority Gift Card",
+    "applicationId": 8,
+    "downloadExpDate": "2025-10-01T18:39:26.384+0000",
+    "contentGroup": "Mifare4Mobile_bin_range",
+    "description": "Sports Authority Gift Card",
+      "additionalParams": [
+    {
+      "name": "APPLICATION_LABEL",
+      "value": "Sports Authority Gift Card"
+    },
+    {
+      "name": "SERVICE_OBJECT_ID",
+      "value": "6074456724319453"
+    },
+    {
+      "name": "ACCESS_BEGIN_DATE",
+      "value": "2013-07-04T12:08:56.235-0700"
+    },
+    {
+      "name": "ACCESS_END_DATE",
+      "value": "2025-08-04T12:08:56.235-0700"
+    },
+    {
+      "name": "SECTOR_OFFSET",
+      "value": "FFFF"
+    },
+    {
+      "name": "S0B0",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B1",
+      "value": "5669564F746563680000000000000000"
+    },
+    {
+      "name": "S0B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S0B3",
+      "value": "1298347656547F078800129834765654"
+    }, 
+    {
+      "name": "S1B0",
+      "value": "36303130353634343536373234333139"
+    },
+    {
+      "name": "S1B1",
+      "value": "3D323530313030303430303030363030"
+    },
+    {
+      "name": "S1B2",
+      "value": "37393435330000000000000000000000"
+    },
+    {
+      "name": "S1B3",
+      "value": "1298347656547F078800129834765654"
+    },
+    { 
+      "name": "S2B0",
+      "value": "36303130353634343536373234333139"
+    },
+    {
+      "name": "S2B1",
+      "value": "5E53504F525453415554482F56414C55"
+    },
+    {
+      "name": "S2B2",
+      "value": "454C494E4B5E32353031303030343030"
+    },
+    {
+      "name": "S2B3",
+      "value": "1298347656547F078800129834765654"
+    },
+    {
+      "name": "S3B0",
+      "value": "30303630303739343533000000000000"
+    },
+    {
+      "name": "S3B1",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S3B2",
+      "value": "00000000000000000000000000000000"
+    },
+    {
+      "name": "S3B3",
+      "value": "1298347656547F078800129834765654"
+    }
+  ]
+  }
+]
+}
