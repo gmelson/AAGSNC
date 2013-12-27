@@ -7,53 +7,8 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"perso"
 )
-
-// Json userAuthParams
-type Challenge struct {
-	Question string `json:"question"`
-	Answer string `json:"answer"`
-}
-
-// Json additionalParams
-type Perso struct {
-	Name string `json:"name"`
-	Value string `json:"value"`
-}
-
-// Json tag
-type TagData struct {
-	Value string `json:"value"`
-	Tag string `json:"tag"`
-	BelongsTo string `json:"belongsTo"`
-}
-
-// Json dgi
-type DgiData struct {
-	Value string `json:"value"`
-	MinLength int `json:"minLength"`
-	MaxLength int `json:"maxLength"`
-	Tags [] TagData `json:"tags"`
-}
-
-// Json docs
-type Document struct {
-	CardNumber string `json:"cardNumber"`
-	Variant int `json:"variant"`
-	Status int `json:"status"`
-	ApplicationId int `json:"applicationId"`
-	Nickname string `json:"nickname"`
-	DownloadExpDate string `json:"downloadexpdate"`
-	Description string `json:"description"`
-	UserAuthParams [] Challenge `json:"userAuthParams"`
-	AdditionalParams [] Perso `json:"additionalParams"`
-	Dgi [] DgiData `json:"dgi"`
-}
-
-// Wrapper structure for docs
-type CardInfo struct {
-	Docs [] Document `json:"docs"`
-}
 
 // Store property file information
 type ConfigInfo struct {
