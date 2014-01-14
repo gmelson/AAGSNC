@@ -13,6 +13,11 @@ import (
     "code.google.com/p/go.net/websocket"
 )
 
+const(
+    cassandraAddress = "192.168.150.167"//"192.168.155.130"
+    keyspaceName = "test_sequent_sptsm"
+    cardDataQuery = `SELECT cardidentifier, applicationid, cardid, contentgroup, description, downloadexpdate, jsondata, nickname, status FROM card_info`
+)
 type CardPerso struct {
     Perso [] Persod `json:"cardperso"`
 }
@@ -70,8 +75,8 @@ func fetchCards()(card CardPerso) {
     cardInfo := Persod{}
 
     // connect to the cluster
-    cluster := gocql.NewCluster("192.168.155.130")
-    cluster.Keyspace = "test_sequent_sptsm"
+    cluster := gocql.NewCluster(cassandraAddress)
+    cluster.Keyspace = keyspaceName
     cluster.Consistency = gocql.One
     cluster.ProtoVersion = 1
 
@@ -81,7 +86,7 @@ func fetchCards()(card CardPerso) {
     }
     defer session.Close()
 
-    iter := session.Query(`SELECT cardidentifier, applicationid, cardid, contentgroup, description, downloadexpdate, jsondata, nickname, status FROM card_info`).Iter()
+    iter := session.Query(cardDataQuery).Iter()
     for iter.Scan(&cardInfo.Cardidentifier,&cardInfo.Applicationid, &cardInfo.Cardid, &cardInfo.Contentgroup,&cardInfo.Description, &cardInfo.Downloadexpdate,&cardInfo.rawdata, &cardInfo.Nickname, &cardInfo.Status) {
         getDocumentFromJsonData(&cardInfo.doc, strings.NewReader(cardInfo.rawdata))
         card.Perso = append(card.Perso, cardInfo)
@@ -144,6 +149,6 @@ func main(){
         panic("ListenAndServe: " + err.Error())
     }
     
-
+    
 
 }

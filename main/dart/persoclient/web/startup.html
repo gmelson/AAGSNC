@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Persoclient</title>
+    <link rel="stylesheet" href="persoclient.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="flexigrid.pack.css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="flexigrid.pack.js"></script>
+  </head>
+  <body>
+    <h1>Persoclient</h1>
+    
+    <p>After start click on the identifer for additional information</p>
+    
+    <div id="sample_container_id">
+      <p id="start_text_id"></p>
+      <p id="cardidentifier_text_id"></p>
+      <p id="applicationid_text_id"></p>
+      <p id="cardid_text_id"></p>
+      <p id="contentgroup_text_id"></p>
+      <p id="description_text_id"></p>
+      <p id="downloadexpdate_text_id"></p>
+      <p id="status_text_id"></p>
+      
+      <table class="additionalParams">
+        <thead>
+          <tr>
+            <th width="100">Name</th>
+            <th width="300">Value</th>
+          </tr>
+        </thead>
+        <tbody id="results">
+           <td>empty</td>
+           <td>empty</td>
+        </tbody>
+        </table>
+    </div>
+
+    <script src="persoclient.dart.js"></script>
+    <script src="packages/browser/interop.js"></script>
+    <script src="packages/browser/dart.js"></script>
+    <script>
+    	$('.additionalParams').flexigrid({
+    	  buttons : [ {
+          name : 'Add',
+          bclass : 'add',
+          onpress : UpdateGrid
+        }
+        ,
+        {
+          name : 'Edit',
+          bclass : 'edit',
+          onpress : UpdateGrid
+        }
+        ,
+        {
+          name : 'Delete',
+          bclass : 'delete',
+          onpress : UpdateGrid
+        }
+        ,
+        {
+          separator : true
+        } 
+        ],
+        title : 'Additional Data',
+    	});
+        
+    	function UpdateGrid(com, grid) {
+    	  if (com == 'Delete') {
+          confirm('Delete ' + $('.trSelected', grid).length + ' items?')
+        } else if (com == 'Add') {
+          alert('Add New Item');
+        }
+    	}
+    	
+    	function reloadgrid(){
+    	  $(".additionalParams").flexReload();
+    	}
+    </script>
+  </body>
+</html>
