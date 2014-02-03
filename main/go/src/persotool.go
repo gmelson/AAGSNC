@@ -13,26 +13,25 @@ import (
     "code.google.com/p/go.net/websocket"
 )
 
+
+
+
 const(
-    cassandraAddress = "192.168.150.167"//"192.168.155.130"
+    cassandraAddress = "192.168.155.130"//"192.168.155.131"//"192.168.150.167"//"192.168.155.130"
     keyspaceName = "test_sequent_sptsm"
-    cardDataQuery = `SELECT cardidentifier, applicationid, cardid, contentgroup, description, downloadexpdate, jsondata, nickname, status FROM card_info`
+    cardDataQuery = `SELECT profileId, seProfileId, description, pluginStr, jsonData, appletInstanceProfilesJson FROM perso_info`//`SELECT cardidentifier, applicationid, cardid, contentgroup, description, downloadexpdate, jsondata, nickname, status FROM perso_info`
 )
 type CardPerso struct {
     Perso [] Persod `json:"cardperso"`
 }
 
 type Persod struct {
-    Cardidentifier string `json:"cardidentifier"`
-    Applicationid int `json:"applicationid"`
-    Cardid int `json:"cardid"`
-    Contentgroup string `json:"contentgroup"`
+    ProfileId string`json:"profileId"`
+    seProfileId int64 `json:"seProfileId"`
     Description string `json:"description"`
-    Downloadexpdate int64 `json:"downloadexpdate"`
-    rawdata string `json:"rawdata"`
-    doc perso.Document `json:"persod"`
-    Nickname string `json:"nickname"`
-    Status int64 `json:"status"`
+    PluginStr string `json:"pluginStr"`
+    JsonData string `json:"jsonData"`
+    AppInstProfJson string `json:"appletInstanceProfilesJson"`
 }
 
 
@@ -87,8 +86,8 @@ func fetchCards()(card CardPerso) {
     defer session.Close()
 
     iter := session.Query(cardDataQuery).Iter()
-    for iter.Scan(&cardInfo.Cardidentifier,&cardInfo.Applicationid, &cardInfo.Cardid, &cardInfo.Contentgroup,&cardInfo.Description, &cardInfo.Downloadexpdate,&cardInfo.rawdata, &cardInfo.Nickname, &cardInfo.Status) {
-        getDocumentFromJsonData(&cardInfo.doc, strings.NewReader(cardInfo.rawdata))
+    for iter.Scan(&cardInfo.ProfileId,&cardInfo.seProfileId, &cardInfo.Description, &cardInfo.PluginStr,&cardInfo.JsonData, &cardInfo.AppInstProfJson) {
+        //getDocumentFromJsonData(&cardInfo.doc, strings.NewReader(cardInfo.rawdata))
         card.Perso = append(card.Perso, cardInfo)
     }
     if err := iter.Close(); err != nil {
@@ -113,17 +112,14 @@ func PersoServer(ws *websocket.Conn) {
         switch  {
         case strings.Contains(c, "go"):
             //convert structure into json
-            j = string(serializeJsonData(card))
+            j = fmt.Sprintf("%s",serializeJsonData(card))
         case strings.Contains(c,"more"):
             action := strings.Split(c,":")
             fmt.Printf("got more request for: %s", action)
             for _, perso := range card.Perso {
-                if perso.Cardidentifier == action[1]{
-                    data, err := json.Marshal(perso.doc)
-                    if nil != err {
-                        log.Fatal(err)
-                    }
-                    j = string(data)
+                if perso.ProfileId == action[1]{
+                    j = fmt.Sprintf("%s", perso.JsonData)
+                    //j = html.UnescapeString(perso.JsonData)
 
                 }
             }

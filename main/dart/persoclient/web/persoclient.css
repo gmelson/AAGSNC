@@ -37,3 +37,7 @@ h1, p {
 .flexigrid div.fbutton .edit {
 	background: url(images/edit.png) no-repeat center left;
 }
+
+
+li.even { background-color: #bdb76b; }
+li.odd { background-color: #fffaf0; }
