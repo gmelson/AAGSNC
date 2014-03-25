@@ -6,7 +6,7 @@ import (
 	"log"
 	"encoding/json"
 	"io"
-	"net/http"
+	"net/http"	
 	"perso"
 )
 
@@ -47,7 +47,7 @@ func updateProperty(config ConfigInfo)error{
  */
 func encryptCardInfo(input io.Reader){
 
-	var card CardInfo
+	var card perso.CardInfo
 
 	//convert to structure
 	dec := json.NewDecoder(input)
@@ -73,7 +73,7 @@ func encryptCardInfo(input io.Reader){
 }
 
 // function for doing AES encryption of data
-type encrypt func (card *CardInfo) (data string)
+type encrypt func (card *perso.CardInfo) (data string)
 
 /**
  *  Main entry point for application

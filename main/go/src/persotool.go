@@ -4,51 +4,44 @@ import (
 	"fmt"
 	"log"
 	"tux21b.org/v1/gocql"
-    "perso"
     "encoding/json"
-    "io"
     "strings"
     "os/exec"
     "net/http"
     "code.google.com/p/go.net/websocket"
 )
 
-
+type Node []byte
 
 
 const(
-    cassandraAddress = "192.168.155.130"//"192.168.155.131"//"192.168.150.167"//"192.168.155.130"
-    keyspaceName = "test_sequent_sptsm"
-    cardDataQuery = `SELECT profileId, seProfileId, description, pluginStr, jsonData, appletInstanceProfilesJson FROM perso_info`//`SELECT cardidentifier, applicationid, cardid, contentgroup, description, downloadexpdate, jsondata, nickname, status FROM perso_info`
+    cassandraAddress = "192.168.155.131"
+    keyspaceName = "test_sequent_setsm"
+    walletDataQuery = `SELECT walletid, deviceprofileid, seprofileid, appletinstanceprofiles, deviceprofile, issuerid, packageprofiles, registrationstatus,restrictedaids, sdprofileid, securitydomainserviceendptnid, seprofile FROM wallet_perso_profile`
+    //walletDataQuery = `SELECT walletid, deviceprofileid, seprofileid, appletinstanceprofiles, deviceprofile,issuerid, packageprofiles, registrationstatus,restrictedaids FROM wallet_perso_profile`
+
 )
 type CardPerso struct {
     Perso [] Persod `json:"cardperso"`
 }
 
 type Persod struct {
-    ProfileId string`json:"profileId"`
-    seProfileId int64 `json:"seProfileId"`
-    Description string `json:"description"`
-    PluginStr string `json:"pluginStr"`
-    JsonData string `json:"jsonData"`
-    AppInstProfJson string `json:"appletInstanceProfilesJson"`
+    WalletId string`json:"walletId"`
+    DeviceProfileId string `json:"deviceProfileId"`
+    SeProfileId string `json:"seProfileId"`
+    AppletInstanceProfiles map[int64]Node `json:"-"`
+    AppletJson []string `json:"appletInstanceProfiles"`
+    DeviceProfile string `json:"deviceProfile"`
+    IssuerId int64 `json:"issuerId"`
+    PackageProfiles map[int64]Node `json:"-"`
+    PackageJson []string `json:"packageProfiles"`
+    RegistrationStatus string `json:"registrationStatus"`
+    RestrictedAids []string `json:"restrictedAids"`
+    SdProfileId string `json:"sdProfileId"`
+    SecurityDomainServiceendPtnId string `json:"secDomainServId"`
+    SeProfile string `json:"seProfile"`
 }
 
-
-func getDocumentFromJsonData(card *perso.Document, input io.Reader) {
-    //convert to structure
-    dec := json.NewDecoder(input)
-    for {
-        err := dec.Decode(&card)
-        if err != nil {
-            if err == io.EOF {
-                break
-            }
-            log.Fatal(err)
-        }
-    }
-
-}
 
 func serializeJsonData(card CardPerso) (data []byte){
     data, err := json.Marshal(card)
@@ -59,14 +52,17 @@ func serializeJsonData(card CardPerso) (data []byte){
     return data
 }
 
-//func fetchCardData(session *gocql.Session, cardInfo *CardPerso) {
+func copyMapToJson(aMap map[int64]Node)([]string){
+    var jsonStr [] string
 
-//    err := session.Query(`SELECT cardidentifier, applicationid, cardid, contentgroup, description, downloadexpdate, jsondata, nickname, status FROM card_info`).Scan(&cardInfo.Cardidentifier,&cardInfo.Applicationid, &cardInfo.Cardid, &cardInfo.Contentgroup,&cardInfo.Description, &cardInfo.Downloadexpdate,&cardInfo.rawdata, &cardInfo.Nickname, &cardInfo.Status)
-//    if err != nil {
-//        log.Fatal(err)
-//    }
+    for _, value := range aMap {
+        jsonStr = append(jsonStr, fmt.Sprintf("%s",value))
+    }
 
-//}
+    return jsonStr
+    //return fmt.Sprintf("%s", jsonStr)
+
+}
 
 func fetchCards()(card CardPerso) {
 
@@ -85,13 +81,17 @@ func fetchCards()(card CardPerso) {
     }
     defer session.Close()
 
-    iter := session.Query(cardDataQuery).Iter()
-    for iter.Scan(&cardInfo.ProfileId,&cardInfo.seProfileId, &cardInfo.Description, &cardInfo.PluginStr,&cardInfo.JsonData, &cardInfo.AppInstProfJson) {
-        //getDocumentFromJsonData(&cardInfo.doc, strings.NewReader(cardInfo.rawdata))
+    iter := session.Query(walletDataQuery).Iter()
+    for iter.Scan(&cardInfo.WalletId, &cardInfo.DeviceProfileId, &cardInfo.SeProfileId, &cardInfo.AppletInstanceProfiles, &cardInfo.DeviceProfile, &cardInfo.IssuerId, &cardInfo.PackageProfiles, &cardInfo.RegistrationStatus,&cardInfo.RestrictedAids, &cardInfo.SdProfileId, &cardInfo.SecurityDomainServiceendPtnId, &cardInfo.SeProfile) {
+        cardInfo.AppletJson = copyMapToJson(cardInfo.AppletInstanceProfiles)
+        log.Printf("AppletInstanceProfiles = %s", cardInfo.AppletJson)
+        cardInfo.PackageJson = copyMapToJson(cardInfo.PackageProfiles)
+        log.Printf("%s", cardInfo.PackageJson)
+
         card.Perso = append(card.Perso, cardInfo)
     }
     if err := iter.Close(); err != nil {
-                log.Fatal("close:", err)
+                log.Fatal("scan problem:", err)
     }
 
     return card
@@ -108,30 +108,37 @@ func PersoServer(ws *websocket.Conn) {
         
         card := fetchCards()
 
-        fmt.Printf("action = %s", c)
+        //More based on SeProfileId
+        fmt.Printf("action = %s \n", c)
+        if strings.Contains(c,"go") {
+            j = fmt.Sprintf("%s",serializeJsonData(card))    
+        }
+
+        /*
         switch  {
         case strings.Contains(c, "go"):
             //convert structure into json
             j = fmt.Sprintf("%s",serializeJsonData(card))
+
         case strings.Contains(c,"more"):
             action := strings.Split(c,":")
             fmt.Printf("got more request for: %s", action)
             for _, perso := range card.Perso {
-                if perso.ProfileId == action[1]{
+                if perso.SeProfileId == action[1]{
                     j = fmt.Sprintf("%s", perso.JsonData)
-                    //j = html.UnescapeString(perso.JsonData)
 
                 }
             }
         }
+        */
         websocket.JSON.Send(ws,&j)
     }
 }
 
 func main(){
 
-    cw := exec.Command("start", "\"\"","./startup.html")
-    c := exec.Command("open", "-a", "Safari","./startup.html")
+    cw := exec.Command("start", "\"\"","./persoclient.html")
+    c := exec.Command("open", "-a", "Safari","./persoclient.html")
     switch {
         case c != nil: 
             c.Start()
@@ -141,6 +148,8 @@ func main(){
     
     http.Handle("/perso", websocket.Handler(PersoServer))
     err := http.ListenAndServe(":12345", nil)
+    //err := http.ListenAndServeTLS(":12345", "jan.newmarch.name.pem","private.pem", nil)
+
     if err != nil {
         panic("ListenAndServe: " + err.Error())
     }

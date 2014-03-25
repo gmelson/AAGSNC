@@ -1,10 +1,11 @@
-file:///Users/gmelson/Projects/dart/dart-sdk/lib/_collection_dev/arrays.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_collection_dev/collection_dev.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_collection_dev/iterable.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_collection_dev/list.dart
+file:///Users/gmelson/Projects/dart/dart-sdk/lib/_collection_dev/lists.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_collection_dev/print.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_collection_dev/sort.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_collection_dev/symbol.dart
+file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/annotations.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/async_patch.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/collection_dev_patch.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/collection_patch.dart
@@ -20,6 +21,7 @@ file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/js_helper.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/js_mirrors.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/js_names.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/js_number.dart
+file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/js_primitives.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/js_rti.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/js_string.dart
 file:///Users/gmelson/Projects/dart/dart-sdk/lib/_internal/lib/math_patch.dart

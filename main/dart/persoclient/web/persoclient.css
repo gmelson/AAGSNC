@@ -6,6 +6,7 @@ body {
   font-weight: normal;
   line-height: 1.2em;
   margin: 15px;
+  cursor:pointer;
 }
 
 h1, p {
@@ -26,18 +27,31 @@ h1, p {
   margin-top: 140px;
 }
 
-.flexigrid div.fbutton .add {
-	background: url(images/add.png) no-repeat center left;
+
+ul{
+  list-style-type: none;
 }
 
-.flexigrid div.fbutton .delete {
-    background: url(images/close.png) no-repeat center left;
+fieldset{
+  display: block;
+  width: 17em;
+}
+fieldset label{
+  display: block;
+  font-weight: bold;
+  margin: 1em 1em 0 0;
+  float: left;
 }
 
-.flexigrid div.fbutton .edit {
-	background: url(images/edit.png) no-repeat center left;
+fieldset input{
+  display: block;
+  width: 15em;
 }
 
+fieldset button{
+  
+}
 
-li.even { background-color: #bdb76b; }
-li.odd { background-color: #fffaf0; }
+tr.even { background-color: #bdb76b; }
+tr.odd { background-color: #fffaf0; }
+

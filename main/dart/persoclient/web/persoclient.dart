@@ -1,23 +1,36 @@
 import 'dart:async';
 import 'dart:html';
 import 'dart:convert';
-import 'dart:js' show context, JsObject;
 import 'package:angular/angular.dart';
 
-class AdditionalInfo{
-  String name;
-  String value;
-  List<Tag>tags;
-  
-  AdditionalInfo(this.name, this.value, this.tags);
-}
 
-class Tag{
-  String tag;
-  String value;
-  String belongsto;
+class CardIdentifier{
+  String cardId;
+  String deviceProfileId;
+  int issuerId;
+  String sdProfileId;
+  String seProfileId;
+  String secDomainServId;
+  String walletId;
+  String registrationStatus;
   
-  Tag(this.tag, this.value, this.belongsto);
+  List <Map>appletInstances;
+  List <Map>packageProfiles;
+  List <String>restrictedAids;
+  
+  Map deviceProfile;
+  Map seProfile;
+  
+  CardIdentifier(
+      this.cardId, 
+      this.deviceProfileId, 
+      this.issuerId,
+      this.sdProfileId,
+      this.seProfileId,
+      this.secDomainServId,
+      this.walletId,
+      this.registrationStatus);
+  
 }
 
 @NgController(
@@ -26,16 +39,13 @@ class Tag{
 class PersoController {
   
   static const Duration RECONNECT_DELAY = const Duration(milliseconds: 500);
-
+  bool isFirstTime = true;
   bool connectPending = false;
   WebSocket webSocket;
-  String cardidentifier_text_id; 
-  List<AdditionalInfo>additionalInfo;
-
+  List<CardIdentifier>mCardIdentifier;
   
   PersoController(){
-    additionalInfo = new List<AdditionalInfo>();
-   
+    mCardIdentifier = new List<CardIdentifier>();
     connect();
   }
   
@@ -60,7 +70,10 @@ class PersoController {
     webSocket.onMessage.listen((e) {
       onMessage(e.data);
     });
-    
+    if(isFirstTime){
+      startProcess();
+      isFirstTime = false;
+    }
   }
   
   void onDisconnected() {
@@ -77,40 +90,58 @@ class PersoController {
    */
 
   void onMessage(data) {
+    
+    var cardId;
+    var package;
+    
     //double decode hack
     var response = JSON.decode(JSON.decode(data));
     var cardperso = response['cardperso'];
     if(cardperso != null && cardperso[0] != null){
       try{
         
-        cardidentifier_text_id = cardperso[0]['profileId'];  
+        for(var i=0; i< cardperso.length; i++){
+          cardId = new CardIdentifier(
+              cardperso[i]['seProfileId'],
+              cardperso[i]['deviceProfileId'],
+              cardperso[i]['issuerId'],
+              cardperso[i]['sdProfileId'],
+              cardperso[i]['seProfileId'],
+              cardperso[i]['secDomainServId'],
+              cardperso[i]['walletId'],
+              cardperso[i]['registrationStatus']);
+                    
+          cardId.deviceProfile = JSON.decode(cardperso[i]['deviceProfile']);
+          cardId.seProfile = JSON.decode(cardperso[i]['seProfile']);
+          
+          //setup List of json objects
+          cardId.appletInstances = new List<Map>();
+          cardId.packageProfiles = new List<Map>();
+          cardId.restrictedAids = new List<String>();
+          
+          // add applet instances
+          for(var appletInstance in cardperso[i]['appletInstanceProfiles']){
+            cardId.appletInstances.add(JSON.decode(appletInstance));
+          }
+          for(var packageProfile in cardperso[i]['packageProfiles']){
+            cardId.packageProfiles.add(JSON.decode(packageProfile));
+          }
+          
+          for(var restrictedAid in cardperso[i]['restrictedAids']){
+            cardId.restrictedAids.add(restrictedAid);  
+          }
+          
+          mCardIdentifier.add(cardId);
+        }
+        
       }
       on Exception catch(e){
         print('Error: $e');
       }
       
     }
-    else if((cardperso = response['dgi']) != null){
-      var _tags = new List<Tag>();
-      
-      additionalInfo.clear();
-      for(var persod in cardperso){
-        
-        //name:, minLength:, maxLength: ,recordTemplate:, tags: [{tag: 5F2D, value: 7275, belongsTo: 9102}, {tag: 9F38, value: 9F66049F02069F03069F1A0295055F2A029A039C019F37049F4E14, belongsTo: 9102}, {tag: BF0C, value: 9F4D02140A, belongsTo: 9102}]}, {name: A102, minLength: 0, maxLength: 0, recordTemplate: 6F, tags: [{tag: 84, value: A0000000031010, belongsTo: A102}, {tag: A5, value: 500B5669736120437265646974, belongsTo: A102}]}, {name: 9207, minLength: 0, maxLength: 0, tags: [{tag: 82, value: 0000, belongsTo: 9207}, {tag: 94, value: , belongsTo: 9207}]}, {name: 3001, minLength: 0, maxLength: 0, tags: [{tag: 57, value: , belongsTo: 3001}, {tag: 5F20, value: 202F, belongsTo: 3001}, {tag: 5F34, value: , belongsTo: 3001}, {tag: 9F50, value: 00000000, belongsTo: 3001}, {tag: 9F51, value: 0643, belongsTo: 3001}, {tag: 9F52, value: 00000100, belongsTo: 3001}, {tag: 9F53, value: 00, belongsTo: 3001}, {tag: 9F68, value: 00180000, belongsTo: 3001}, {tag: 9F6B, value: 000000100000, belongsTo: 3001}, {tag: 9F6C, value: 0000, belongsTo: 3001}, {tag: 9F6E, value: 23000000, belongsTo: 3001}]}, {name: 9200, minLength: 0, maxLength: 0, tags: [{tag: 9F10, value: 06010A03000000, belongsTo: 9200}]}, {name: 8000, value: , minLength: 0, maxLength: 48}, {name: 9000, value: , minLength: 0, maxLength: 9}]
-        
-        var tagjson = persod['tags'];
-       
-        for(var tag in tagjson){
-          _tags.add(new Tag(tag['value'], tag['value'], tag['belongsTo']));
-        }
-        additionalInfo.add(new AdditionalInfo(persod['name'],persod['value'],_tags));
-      }
-      
-      //JavaScript call to force reload of flexi grid
-      context.callMethod('reloadgrid',[]);
-
-    }
   }
+  
   /**
    * Begin websocket communication with go server  
    */
@@ -118,33 +149,199 @@ class PersoController {
     webSocket.sendString("go");
   }
   
-  void editRow(int index) {
-    DivElement div = new DivElement();
+  /**
+   * getCleanForm
+   * 
+   * Get div id=dialog-form
+   * If there are child elements, remove them
+   */
+  DivElement getCleanForm() {
+    
+    DivElement div = querySelector("#dialog-form");//document.getElementById("dialog-form");
+
+    if(null != div.children){
+      div.children.clear();
+      
+    }
+    return div;
+  }
+
+
+  /**
+   * edit
+   * 
+   * Show package or applet instance informaition, allow user to edit
+   */
+  void edit(int index, var type) {    
+    List list;
+    ButtonElement button = new ButtonElement();
+    button.name = index.toString();
+    button.text = 'Done';
+   
+    DivElement div = getCleanForm();
+    
+    switch(type){
+      case 'APPLET_INSTANCE':
+        list = mCardIdentifier.elementAt(index).appletInstances;
+        button.onClick.listen(onSaveAppletInstance);
+        break;
+        
+      case 'PACKAGE_INSTANCE':
+        list = mCardIdentifier.elementAt(index).packageProfiles;
+        button.onClick.listen(onSavePackageInstance);
+        break;
+        
+    }
+    
+    buildDialogFromList(list,div,index);
+    div.children.add(button);
+  
+  }
+  
+  /**
+   * buildDialogFromList
+   * 
+   * Get the list of instances, iterate over and create fields from map
+   * 
+   */
+  void buildDialogFromList(List list, DivElement div, int selectedIndex){
+    int childIndex = 0;
+    FieldSetElement fs = new FieldSetElement();
+    fs.id = 'dialog-fieldset';
+    //Loop over json objects
+    for(Map map in list) {
+      buildDialogFromMap(map, fs, selectedIndex, childIndex++);
+    }
+    div.children.add(fs);
+  }
+  
+  /**
+   * buildDialogFromMap
+   * Iterate over Json objects and create a dialog in DIV
+   */
+  void buildDialogFromMap(Map map, Element elem, int selectedIndex, int childIndex) {
+    LabelElement label;
+    TextInputElement input;
+    ButtonElement button;
+    Element e;
+     
+    map.forEach((k,v){
+      
+      //Create and add label
+      label = new LabelElement();
+      label.id = "fieldset-label";
+      label.text = k.toString();            
+      elem.children.add(label);
+
+      switch(k){
+        case 'instanceAID':
+          input = new TextInputElement();
+          input.value = v['aid'];
+          input.name = k.toString();
+          input.id = "fieldset-input";
+          elem.children.add(input);
+          break;
+        case 'packageAID':
+        case 'appletProfile':
+          button = new ButtonElement();
+          button.id = "fieldset-button";
+          button.text = '...';
+          button.name = k.toString() +"," + selectedIndex.toString()+ ","+childIndex.toString();
+          button.onClick.listen(onProfile);
+          elem.children.add(button);
+          break;
+        default:
+          input = new TextInputElement();
+          input.name = k.toString();
+          input.id = "fieldset-input";
+          input.value = v.toString();
+          elem.children.add(input);
+      }
+      
+
+    });    
+  }
+  
+  /**
+   * onProfile
+   * 
+   * Click applet instance or package profile button, display in dialog
+   */
+  void onProfile(Event e){
+    Map map;
+    ButtonElement button = e.target;
+    List<String> indexes = button.name.split(',');
+    String type = indexes[0];
+    int selectedIndex = int.parse(indexes[1]);
+    int childIndex = int.parse(indexes[2]);
+     
+    switch(type){
+      case 'packageAID':
+        map = mCardIdentifier.elementAt(selectedIndex).packageProfiles.elementAt(childIndex);
+        break;
+      case 'appletProfile':
+        map = mCardIdentifier.elementAt(selectedIndex).appletInstances.elementAt(childIndex);
+        break;
+    }
+    
+    FieldSetElement fs = new FieldSetElement();
+    buildDialogFromMap(map, fs, selectedIndex, childIndex);
+    getCleanForm().children.add(fs); 
+  }
+  
+
+  void onSavePackageInstance(Event e){
+    getCleanForm(); 
+  }
+  
+  /**
+   * onSaveAppletInstance
+   * index is the index of additionalInfo set as the Button.name corresponding
+   * to the row clicked on to edit.
+   */
+  void onSaveAppletInstance(Event e){
+    
+    ButtonElement button = e.target;
+    int index = int.parse(button.name);
+    FieldSetElement fs = querySelector("#dialog-fieldset");
+    int tagNdx =0;
+    var tag;
+    TextInputElement inputElem;
+    CardIdentifier infoToSave = mCardIdentifier.elementAt(index);
+    
+    fs.children.forEach((c){
+      if(c is TextInputElement){
+        TextInputElement e = c;
+        switch(e.name){
+          case 'appletInstanceId':
+            break;
+          case 'instanceAID':
+            break;
+        }
+        infoToSave.appletInstances;
+      }
+    });
+    
+    getCleanForm();
     
   }
+  
   
   /**
    * Id was clicked, go get the additional parameters for the identifier
    */
-  void getCard() {
-    var message = "more:" + cardidentifier_text_id;
+  void getCard(String cardId) {
+    var message = "more:" + cardId;
     webSocket.sendString(message);
   }
 }
 class MyAppModule extends Module {
   MyAppModule() {
     type(PersoController);
-   
   }
 }
 
 void main() {
   ngBootstrap(module: new MyAppModule());
-  //var client = new PersoC();
-  //querySelector("#start_text_id")
-  //  ..text = "Click me!"
-   // ..onClick.listen(client.startProcess);
-  //querySelector("#cardidentifier_text_id")
-   // ..onClick.listen(client.getcard);
 }
 
