@@ -7,6 +7,7 @@ import (
     "encoding/json"
     "pbscafe"
     "io"
+    "code.google.com/p/go.net/websocket"
 )
 
 func PrivateServer(ws *websocket.Conn) {

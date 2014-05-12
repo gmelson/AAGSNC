@@ -2,6 +2,7 @@ import 'dart:html';
 import 'package:angular/angular.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'soap.dart';
 
 class PersoData {
   String msdnText;
@@ -14,6 +15,80 @@ class PersoData {
   String serviceIdText = '301';  
 }
 
+class State {
+  int nextState;
+  int currState;
+  int process;
+  
+  //processes
+  static const int GET_STATUS = 0;
+  static const int GET_COUNTER = 1;
+  
+  //states
+  static const int SE_COMMAND = 3;
+  static const int BEGIN_CONVERSATION = 0;
+  static const int SEND_SCRIPT = 1;
+  static const int END_CONVERSATION =2;
+
+  var state = {
+      SE_COMMAND: '/b2b/gp21/cardContentManagement',
+      BEGIN_CONVERSATION:'/b2b/gp21/scriptSending',
+      SEND_SCRIPT : '/b2b/gp21/scriptSending',
+      END_CONVERSATION : '/b2b/gp21/scriptSending'
+  };
+
+  State(this.process, this.currState);
+  
+  void step(){
+    this.currState = this.nextState;
+  }
+  
+  bool checkStep(var responseXml){
+    bool retVal = true;
+    switch(this.process) {
+        case GET_STATUS:
+          retVal = getStatusState(responseXml);
+          break;
+        case GET_COUNTER:
+          retVal = getCounterState();
+          break;
+    }
+    
+    return retVal;
+  }
+  
+  bool getCounterState(){
+    switch(currState){
+      case SE_COMMAND:
+        nextState = BEGIN_CONVERSATION;
+        break;
+      case BEGIN_CONVERSATION:
+        nextState = SEND_SCRIPT;
+        break;
+      case SEND_SCRIPT:
+        nextState = END_CONVERSATION;
+        break;
+    }
+    
+    return nextState != currState;
+  }
+  
+  bool getStatusState(var xml){
+    switch(currState){
+      case SE_COMMAND:
+        nextState = BEGIN_CONVERSATION;
+        break;
+      case BEGIN_CONVERSATION:
+        nextState = SEND_SCRIPT;
+        break;
+      case SEND_SCRIPT:
+        nextState = END_CONVERSATION;
+        break;
+    }
+    return nextState != currState;
+  }
+}
+
 @NgController(
     selector: '[provision-client]',
     publishAs: 'provision')
@@ -24,21 +99,81 @@ class ProvisionController{
   bool connectPending = false;
   WebSocket webSocket;
   PersoData perso;
-  
+  static State state;
   String persoError = '';
   bool isBusy =false;
   String step;
  
   ProvisionController(){
     perso = new PersoData();
-    hideWait(true);
+    showWait(false);
       
-    connect();
+    //GAM for websocket connect();
+  }
+  
+  void post(var url, var soap){
+    var encodedData = Uri.encodeComponent(soap);
+    var httpRequest = new HttpRequest();
+    httpRequest.open('POST', url);
+    httpRequest.setRequestHeader('Content-type', 
+    'text/xml');
+    httpRequest.onLoadEnd.listen((e) => loadEnd(httpRequest));
+    httpRequest.send(encodedData);    
+
+  }
+  
+  loadEnd(HttpRequest request) {
+    if (request.status != 200 && request.status !=0) {
+      print('Uh oh, there was an error of ${request.status}');
+      showWait(false);
+    } else {
+      
+      if(state.checkStep(request.responseXml)){
+        postSoap(state.currState);
+        state.step();
+      }
+      print('Data has been posted');
+    }
+  }
+
+  void postSoap(int aState){
+    SoapData.fromDomain = perso.fromDomainText;
+    SoapData.toDomain = perso.toDomainText;
+    SoapData.phone = perso.msdnText;
+    SoapData.operationCode = perso.operationCodeText;
+    SoapData.SEID = perso.seidText;
+    SoapData.serviceId = perso.serviceIdText;
+    SoapData.serviceQualifier = perso.serviceQualifierText;
+
+    var url = perso.toDomainText + state.state[aState];
+    var soap;
+    switch(aState){
+      case State.SEND_SCRIPT:
+        soap = SoapData.SEND_SCRIPT;
+        break;
+      case State.BEGIN_CONVERSATION:
+        soap = SoapData.BEGIN_CONVERSATION;
+        break;
+      case State.END_CONVERSATION:
+        soap = SoapData.END_CONVERSATION;
+        break;
+      case State.SE_COMMAND:
+        soap = SoapData.SE_REMOTE_EXECUTION;
+        break;
+    }
+    
+    post(url,soap);
+    
   }
   
   void startPush(){
-    hideWait(false);
-    showError(persoError = "it worked");
+    showWait(true);
+    
+    state = new State(State.GET_STATUS, State.BEGIN_CONVERSATION);
+    postSoap(state.currState);
+  }
+
+  void sendWebSocket(){
     Map map = new Map();
     map["msdn"] = perso.msdnText;
     map["aid"] = perso.aidText;
@@ -51,14 +186,15 @@ class ProvisionController{
     map["command"] = "getData";
     
     webSocket.sendString(JSON.encode(map));
-  }
 
+  }
+  
   /**
    * show spinner based on flag
    */
-  void hideWait(bool hide){
+  void showWait(bool show){
     List<DivElement>waitSpin = document.body.getElementsByClassName(".spinner");
-    waitSpin[0].hidden = hide;
+    waitSpin[0].hidden = !show;
   }
   
   /**

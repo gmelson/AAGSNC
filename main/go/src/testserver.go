@@ -2,25 +2,19 @@ package main
 
 import (
 	"fmt"
-    "net/http"
-    "code.google.com/p/go.net/websocket"
+	"log"
 )
-
-func TestServer(ws *websocket.Conn) {
-	fmt.Printf("%s", "help")
-}
 
 
 func main(){
-    
-    http.Handle("/", websocket.Handler(TestServer))
-    err := http.ListenAndServe(":12345", nil)
-
-    if err != nil {
-        panic("ListenAndServe: " + err.Error())
-    }
-    
-    
-
+	var what string
+	_, err := fmt.Scanf("%s",&what);
+	if err != nil {
+		log.Fatal("yikes")
+	}
+	
+	if what == "truth" {
+		fmt.Printf("\nlies\n")
+	}
 }
 
