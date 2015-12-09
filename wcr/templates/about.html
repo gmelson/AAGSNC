@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the    -->
+<!-- browser's rendering engine into               -->
+<!-- "Standards Mode". Replacing this declaration  -->
+<!-- with a "Quirks Mode" doctype may lead to some -->
+<!-- differences in layout.                        -->
+
+<html>
+{% load staticfiles %}
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>About Us</title>
+    <!--                                                               -->
+    <!-- Consider inlining CSS to reduce the number of requested files -->
+    <!--                                                               -->
+    <link type="text/css" rel="stylesheet" href="{% static 'main/css/main.css' %}">
+  </head>
+
+  <!--                                           -->
+  <!-- The body can have arbitrary html, or      -->
+  <!-- you can leave the body empty if you want  -->
+  <!-- to create a completely dynamic UI.        -->
+  <!--                                           -->
+  <body style="background-color: rgb(255, 255, 255);">
+  	<div id="gamwrap" > 
+	<div id="gamheader">
+	<div class="logo"><a href="/">Home</a></div>
+	<div class="nav" id="header-nav">
+      <ul>
+    <li><a href="https://mkt.com/weekend-coffee-roasters">Shop</a></li>
+    <li><a href="/contact"><span>Contact</span></a></li>
+  </ul>
+	</div>
+	</div>
+	<div id="main">
+    <h1 id='page_header' class=''>About Us</h1>
+
+<div class='image-frame right'>
+  <div class='frame'>&nbsp;</div>
+  <img src="" alt="" />
+ </div>
+  
+  <p>It started with six people and a dream, the funny thing is we didn't know we shared the same dream.</p>
+
+<p>My sister Linn and I always talked about opening a coffee shop. We wanted an inviting, relaxing place where friends meet and engage in stimulating conversation while enjoying delicious coffee. Our intention was to promote a sense of community while doing what we love.</p>
+
+<p>One day while talking with our brother Brandon, he mentioned his dream of opening a coffee shop! WHAAAT?! Our conversation went something like this, "... that's what we want to do... we even have a theme!" Brandon already had a business plan for his dream which he developed with the remaining members of our team, cousin and coffee snob Greg, adopted family member and master of organization Don, and brother Chris.</p>
+
+<p>And so it began... Weekend Coffee Roasters and a five year plan.</p>
+
+<p>We have recently entered year four of our five year plan and have reached many milestones. We've been roasting coffee for four years, and recently purchased a second roaster. We've attended many business courses and some very enjoyable coffee classes such as cupping, milk chemistry, barista training just to mention a few. Our most recent accomplishment is our exclusive contract with En Route Grill, an emerging mobile catering company.
+</p>
+
+<p>We would like to thank everyone that has supported us by ordering coffee online. The members of Weekend Coffee Roasters look forward to meeting you in person as we will open near you in October of 2016. Year FIVE!</p>
+
+</div>
+  </div>
+
+
+  </body>
+</html>

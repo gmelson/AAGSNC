@@ -1,0 +1,38 @@
+<html>
+{% load staticfiles %}
+
+  <link type="text/css" rel="stylesheet" href="{% static 'main/css/main.css' %}">
+
+  <!-- Styling for your grid blocks -->
+  <link rel="stylesheet" type="text/css" href="{% static 'main/css/default.css' %}" />
+
+<!-- include jQuery library -->
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-61935018-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<body style="background-color: rgb(255, 255, 255);">
+
+  <div id="gamheader">
+    <div class="nav" id="header-nav">
+      <ul>
+        <li><a href="/"><span>Home</span></a></li>
+        <li><a href="/shop"><span>Shop</span></a></li>
+      </ul>
+    </div>
+  </div>
+  <div>
+  <a href='https://mkt.com/weekend-coffee-roasters' class='sq-embed-menu' data-menu-item-images='large' data-menu-accent-color='83b3b3' data-menu-template='column' data-menu-border='show' data-menu-item-descriptions='show' >Order Online</a>
+<script src="https://cdn.sq-api.com/market/embed.js" charset="utf-8"></script>
+  </div>
+</body>
+</html>

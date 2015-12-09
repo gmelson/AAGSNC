@@ -1,0 +1,280 @@
+#gamwrap {
+	position: relative;
+	overflow: hidden;
+	width: 1000px;
+	height: 100%;
+	height: auto !important;
+	min-height: 100%;
+	margin: 0 auto;
+	font-size: 12px;
+	
+	zoom: 1;
+}
+
+#gamheader {
+	position: relative;
+	overflow: hidden;
+	height: 115px;
+	padding: 0 0px;
+	width: 1000px;
+	background: rgb(58,59,64);
+}
+
+#main{
+	margin: 0 0 16px;
+}
+
+#description-container {
+	height: 400px;
+	width: 1000px;
+}
+
+#gamheader .logo {
+	float: left;
+	width: 300px;
+	height: 115px;
+	margin: 0px 0 0 50px;
+    background: url('images/logo.png') top left no-repeat;
+}
+
+#social {
+	 background: url('images/social-icons.jpg')bottom left no-repeat; 
+	 width: 290px;
+	 height: 56px;
+	 right: 10px;
+	 background-size: contain;
+}
+
+#gamheader .logo a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	text-indent: -1000em;
+}
+
+#gamheader .nav {
+	right: 40px;
+	position: absolute;
+	bottom: 40px;
+}
+
+#gamheader .nav ul {
+	overflow: hidden;
+	list-style: none;
+	margin: 0;
+}
+
+#gamheader .nav ul li {
+	float: left;
+	height: 43px;
+}
+
+#gamheader .nav ul li a {
+	display: block;
+	line-height: 54px;
+	padding: 0 7px;
+	font-size: 14px;
+	color: rgb(255,255,255);
+	text-decoration: none;
+	text-transform: lowercase;
+}
+
+#gamheader .nav ul li a:hover {
+
+}
+
+/******************************
+Information
+******************************/
+
+#information {
+	/* background: url('/media/bg-white-75.png') repeat 0 0; */
+	color: #444;
+	font-size: 11px;
+	margin: 27px 0 0 0;
+	-moz-border-radius: 0 0 3px 3px;
+	-webkit-border-radius: 0 0 3px 3px;
+	border-radius: 0 0 3px 3px;
+}
+
+
+#information .info-col {
+	float: left;
+	width: 330px;
+	margin: 0;
+	padding: 0;
+}
+#information .info-col-center {
+	min-height: 300px;
+	width: 340px;
+}
+
+#information:after {
+	clear: both;
+	content: ".";
+	display: block;
+	height: 0;
+	visibility: hidden;
+}
+
+body {
+    background: url("/medai/bg-top.png") repeat-x scroll center top transparent;
+    font: 12px/18px "Lucida Sans Unicode","Lucida Grande",Arial,Helvetica,Verdana,sans-serif;
+    position: relative;
+}
+
+#currentevents {
+	padding: 20px 20px 10px;
+}
+
+#currentevents .blog{
+    border-top: 1px solid #999999;	
+	padding: 10px 0 0;	
+}
+
+.myinfo {
+	font: 18px/22px 'Georgia','Times','Times New Roman',serif;
+	color: #444444;
+}
+
+#information .info-col h3 {
+    color: #444444;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.info-col #myapplication {
+	background: url("/media/web-phone.png") center top no-repeat;
+}
+
+p {
+    margin: 0 0 8px;
+}
+
+.pics {  
+    height:  449px;  
+    width:   1000px;  
+    padding: 0;  
+    margin:  0;  
+    float: center;
+} 
+ 
+.pics img {  
+    background-color: #eee;  
+    width:  1000px; 
+    height: 449px; 
+    top:  0; 
+    left: 0 
+} 
+
+.shopping-cart {
+    display: inline-block;
+    background: url('http://cdn1.iconfinder.com/data/icons/jigsoar-icons/24/_cart.png') no-repeat 0 0;
+    width: 24px;
+    height: 24px;
+    margin: 10px 15px 0 0;
+}
+
+#social #facebookicon{
+	width: 70px;
+	height: 56px;
+	top: 0;
+	float: left; 
+	left: 0;
+}
+
+#social #twittericon {
+	width: 70px;
+	height: 56px;
+	top: 0;
+	float: left; 
+	left: 72;
+}
+
+#social #instagramicon {
+	width: 70px;
+	height: 56px;
+	top: 0;
+	float: left; 
+	left: 144;
+}
+
+#social #googleplusicon{
+	width: 70px;
+	height: 56px;
+	top: 0;
+	float: left; 
+	left: 216;	
+}
+
+#totalcart {
+	z-index:100;
+    color: black;
+	font-weight:bold;
+    font-size:12px;
+    top: -3px;
+}
+
+
+/* slideshow images (for most of the demos, these are the actual "slides") */
+.cycle-slideshow img { 
+    /* 
+    some of these styles will be set by the plugin (by default) but setting them here
+    helps avoid flash-of-unstyled-content
+    */
+    position: absolute; top: 0; left: 0;
+    width: 100%; padding: 0; display: block;margin: 3px 0 0 0;
+}
+
+/* in case script does not load */
+.cycle-slideshow img:first-child {
+    position: static; z-index: 100;
+}
+
+/* pager */
+.cycle-pager { 
+    text-align: center; width: 100%; z-index: 500; position: absolute; bottom: 10px; overflow: hidden;
+}
+.cycle-pager span { 
+    font-family: arial; font-size: 50px; width: 16px; height: 16px; 
+    display: inline-block; color: #ddd; cursor: pointer; 
+}
+.cycle-pager span.cycle-pager-active { color: #D69746;}
+.cycle-pager > * { cursor: pointer;}
+
+
+/* caption */
+.cycle-caption { position: absolute; color: white; bottom: 15px; right: 15px; z-index: 700; }
+
+
+/* overlay */
+.cycle-overlay { 
+    font-family: tahoma, arial;
+    position: absolute; bottom: 0; width: 100%; z-index: 600;
+    background: black; color: white; padding: 15px; opacity: .5;
+}
+
+.disabled { opacity: .5; filter:alpha(opacity=50); }
+
+
+/* display paused text on top of paused slideshow */
+.cycle-paused:after {
+    content: 'Paused'; color: white; background: black; padding: 10px;
+    z-index: 500; position: absolute; top: 10px; right: 10px;
+    border-radius: 10px;
+    opacity: .5; filter: alpha(opacity=50);
+}
+
+/* 
+    media queries 
+    some style overrides to make things more pleasant on mobile devices
+*/
+
+@media only screen and (max-width: 640px), only screen and (max-device-width: 640px) {
+    .cycle-slideshow { width: 640px;}
+    .cycle-overlay { padding: 4px }
+    .cycle-caption { bottom: 4px; right: 4px }
+    #gamheader { width: 640px;}
+    #gamwrap {width: 640px;}
+}

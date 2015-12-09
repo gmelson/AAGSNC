@@ -1,0 +1,67 @@
+<html>
+{% load staticfiles %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link type="text/css" rel="stylesheet" href="{% static 'main/css/main.css' %}">
+  <!-- Styling for your grid blocks -->
+  <link rel="stylesheet" type="text/css" href="{% static 'main/css/default.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'main/css/component.css' %}" />
+  <!-- include jQuery -->
+  <script src="{% static 'main/modernizr.custom.js' %}"></script>
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+</head>
+<body>
+  <div id="gamheader">
+
+<div class="nav" id="header-nav">
+      <ul><li><a href="/"><span>Home</span></a></li>
+        <li><a href="/cart"><span id="totalcart">{% if totalNcart > 0 %}{{totalNcart}}&nbsp{% endif %}</span><span class="shopping-cart"></span></a></li>
+      </ul>
+    </div>
+</div>
+  <div class="container">
+    <ul class="grid effect-1" id="grid">
+        <!-- These are our grid blocks -->
+{% if all_products %}
+  {% for product in all_products %}
+    <li class="item"><a href="/product/{{product.id}}/"><img src="{% static 'main/images' %}{{product.photo.url}}"></a><a href="/add_to_cart/{{product.id}}/{{1}}" class="add-to-cart button btn-cart">Add to Cart</a>{{product.price_in_dollars}} / 1lb</li>
+      <!--div class="item{% if forloop.counter0%} w2{% endif %}"><a href="/product/{{product.id}}/" rel="lightbox"><img src="{{product.photo.url}}"  ></a></div-->
+  {% endfor %}
+{% else %}
+  <p>no products</p>
+{% endif %}
+    </ul>
+  </div>
+
+<script src="{% static 'main/masonry.pkgd.min.js' %}"></script>
+<script src="{% static 'main/imagesloaded.js' %}"></script>
+<script src="{% static 'main/classie.js' %}"></script>
+<script src="{% static 'main/AnimOnScroll.js' %}"></script>
+<script src="{% static 'main/anim.js' %}"></script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-61935018-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<script>
+  new AnimOnScroll( document.getElementById('grid'), {
+      minDuration : 0.4,
+      maxDuration : 0.7,
+      viewportFactor : 0.2
+  });
+</script>
+
+</body>
+</html>
