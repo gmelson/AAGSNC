@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html ng-app>
+  <head>
+    <meta charset="utf-8">
+    <title>Persoclient</title>
+    <link rel="stylesheet" href="persoclient.css">
+    <link rel="stylesheet" type="text/css" href="flexigrid.pack.css" />
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="flexigrid.pack.js"></script>
+  </head>
+  <body>
+    <h1>Persoclient</h1>
+    
+    <p>After start click on the identifer for additional information</p>
+    <div perso-client>
+      <p ng-click="perso.startProcess()">Click here to start</p>
+      <div ng-click="perso.getCard()">{{perso.cardidentifier_text_id}}</div>
+      <p id="applicationid_text_id"></p>
+      <p id="cardid_text_id"></p>
+      <p id="contentgroup_text_id"></p>
+      
+      <p id="downloadexpdate_text_id"></p>
+      <p id="status_text_id"></p>
+      <table class="additionalParams">
+        <thead>
+          <tr>
+            <th width="200">Name</th>
+            <th width="300">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+           <tr  ng-repeat="info in perso.additionalInfo" class="{{['erow', ''][$index %2]}}" >
+            <td>{{info.name}}</td><td>{{info.value}}</td>
+           </tr>
+        </tbody>
+        </table>
+        
+        <ul>
+        <li ng-repeat="info in perso.additionalInfo"  class="{{['even','odd'][$index %2]}}" onclick="editRow($index)">
+        {{info.name}} {{info.value}}
+        <p ng-repeat="tag in info.tags">{{tag.tag}} {{tag.value}} {{tag.belongsto}}</p>
+        </li>
+          
+        </ul>
+    </div>
+    
+    <script src="persoclient.dart.js"></script>
+    <script src="packages/browser/interop.js"></script>
+  
+    <!-- script type="application/dart" src="persoclient.dart"></script-->
+    <!-- script src="packages/browser/dart.js"></script-->
+    <script>
+    	$('.additionalParams').flexigrid({
+    	  buttons : [ {
+          name : 'Add',
+          bclass : 'add',
+          onpress : UpdateGrid
+        }
+        ,
+        {
+          name : 'Edit',
+          bclass : 'edit',
+          onpress : UpdateGrid
+        }
+        ,
+        {
+          name : 'Delete',
+          bclass : 'delete',
+          onpress : UpdateGrid
+        }
+        ,
+        {
+          separator : true
+        } 
+        ],
+        rp: 15
+    	});
+    	
+    	function UpdateGrid(com, grid) {
+    	  if (com == 'Delete') {
+          confirm('Delete ' + $('.trSelected', grid).length + ' items?')
+        } else if (com == 'Add') {
+          myDialog();
+        }
+    	}
+    	
+    	function reloadgrid(){
+ 
+    	  $(".additionalParams").flexReload();
+    	}
+    	
+    	function addData(data){
+    	  alert(data);
+    	  $(".additionalParams").flexAddData(data);
+    	}
+    	
+    	function myDialog()
+    	{
+        	$("#dialog-modal").dialog(
+            {
+              height: 140,
+              modal: true
+     		});
+		}
+    	
+    	function editRow(index) {
+    	  alert(index);
+    	}
+    	
+    </script>
+    
+  </body>
+  
+</html>

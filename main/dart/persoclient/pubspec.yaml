@@ -1,0 +1,6 @@
+name: persoclient
+description: A sample web application
+dependencies:
+  angular: 0.9.4
+  browser: any
+  js: any

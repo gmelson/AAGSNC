@@ -1,0 +1,57 @@
+
+body {
+  background-color: #F8F8F8;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.2em;
+  margin: 15px;
+  cursor:pointer;
+}
+
+h1, p {
+  color: #333;
+}
+
+#sample_container_id {
+  width: 100%;
+  height: 400px;
+  position: relative;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+
+#sample_text_id {
+  font-size: 24pt;
+  text-align: center;
+  margin-top: 140px;
+}
+
+
+ul{
+  list-style-type: none;
+}
+
+fieldset{
+  display: block;
+  width: 17em;
+}
+fieldset label{
+  display: block;
+  font-weight: bold;
+  margin: 1em 1em 0 0;
+  float: left;
+}
+
+fieldset input{
+  display: block;
+  width: 15em;
+}
+
+fieldset button{
+  
+}
+
+tr.even { background-color: #bdb76b; }
+tr.odd { background-color: #fffaf0; }
+

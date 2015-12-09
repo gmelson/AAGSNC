@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Persoclient</title>
+    <link rel="stylesheet" href="persoclient.css">
+  </head>
+  <body>
+    <h1>Persoclient</h1>
+    
+    <!--p>After start click on the identifer for additional information</p-->
+    <div perso-client>
+      
+      <table border="1">
+      <tr><th>id</th><th>issuerid</th><th>seProfileId</th><th>walletId</th><th>registration status</th><th>Applet instance count</th><th>Package count</th></tr>
+      <tr ng-repeat="identifier in perso.mCardIdentifier" class="{{['even','odd'][$index %2]}}" >
+        <td>{{identifier.cardId}}</td>
+        <td>{{identifier.issuerId}}</td>
+        <td>{{identifier.seProfileId}}</td>
+        <td>{{identifier.walletId}}</td>
+        <td>{{identifier.registrationStatus}}
+        <td>{{identifier.appletInstances.length}}<button ng-click="perso.edit($index,'APPLET_INSTANCE')">...</button></td>
+        <td>{{identifier.packageProfiles.length}}<button ng-click="perso.edit($index,'PACKAGE_INSTANCE')">...</button></td>
+      </tr>
+      </table>
+      
+      <div id="dialog-form">  
+      </div>
+      
+    </div>
+    
+    <!-- script src="persoclient.dart.js"></script -->
+    <!-- script src="packages/browser/interop.js"></script -->
+  
+    <script type="application/dart" src="persoclient.dart"></script>
+    <script src="packages/browser/dart.js"></script>
+     
+  </body>
+  
+</html>
